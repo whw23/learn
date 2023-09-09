@@ -1,2 +1,3 @@
-# Learn
+# Study Notes
+
 [Shadowsocks](./shadowsocks)
