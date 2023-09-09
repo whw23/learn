@@ -11,8 +11,8 @@ docker pull shadowsocks/shadowsocks-libev:latest
 ```
 docker run -d -p customport:8388 -p customport:8388/udp -e PASSWORD=mypassword --restart always shadowsocks/shadowsocks-libev:latest
 ```
-此处修改customport和mypassword
-default METHOD=aes-256-gcm
+此处修改customport和mypassword\
+默认加密方式 METHOD=aes-256-gcm
 ## clash
 [Download clash](https://github.com/Fndroid/clash_for_windows_pkg/releases)
 ## clash.yaml
