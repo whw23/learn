@@ -1,4 +1,4 @@
-# shadowshocks with docker
+# shadowshocks server with docker
 
 > Github site : [Github](https://github.com/shadowsocks/shadowsocks-libev) \
 > A list of supported tags can be found at [Docker Hub](https://hub.docker.com/r/shadowsocks/shadowsocks-libev/tags/).
@@ -13,6 +13,8 @@ docker run -d -p customport:8388 -p customport:8388/udp -e PASSWORD=mypassword -
 ```
 此处修改customport和mypassword
 default METHOD=aes-256-gcm
+## clash
+[Download clash](https://github.com/Fndroid/clash_for_windows_pkg/releases)
 ## clash.yaml
 [clash rules](https://github.com/Loyalsoldier/clash-rules)
 ```
