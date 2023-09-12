@@ -1,6 +1,8 @@
 # Docker 命令
 ## ps
-```docker ps```
+```docker ps```已启动容器
+
+```docker ps -a```所有容器，包含未启动
 
 ```docker image ls```
 ## docker build
