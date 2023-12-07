@@ -32,7 +32,19 @@ services:
 - “-v”挂载
 - “-p”端口
 - “--restart=always”
-  
+
+## docker run 保持容器启动
+```docker run --name my-alpine alpine /bin/sh -c "while true; do echo 'Container is running'; sleep 3600; done"```
+
+如果您想在 Command override 中使用，您可以将其写成以下格式：
+
+```[ "/bin/sh", "-c", "while true; do echo 'Container is running'; sleep 3600; done" ]```
+
+```while true; do echo 'Container is running at $(date)'; sleep 3600; done```
+
+如果需要中国时间
+```-e TZ=Asia/Shanghai```
+
 ## 进入容器内
 ```docker exec -u root -it <container_id_or_name> /bin/bash```
 
