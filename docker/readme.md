@@ -36,7 +36,7 @@ services:
 ## docker run 保持容器启动
 需要注意是```/bin/bash```或者```/bin/sh```
 
-```docker run --name my-alpine alpine /bin/sh -c "while true; do echo 'Container is running at $(date)'; sleep 3600; done"```
+```docker run --name my-alpine alpine /bin/sh -c "while true; do echo 'Container is running at '$(date); sleep 3600; done"```
 
 如果您想在 Command override 中使用，您可以将其写成以下格式：输出当前时间并 sleep 3600秒。
 
