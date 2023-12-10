@@ -5,8 +5,13 @@ https://github.com/hwdsl2/setup-ipsec-vpn
 https://github.com/hwdsl2/docker-ipsec-vpn-server
 
 ## opsec vpn set up with Azure container instances
-1. Run alpine - 版本会变化，当前版本 alpine:3.18
-2. 开启端口 500、4500 UDP。
-3. --restart=always
-4. 为了容器持续运行，Command override\
+1. 镜像\
+```alpine - 版本会变化，当前版本 alpine:3.18```
+2. DNS name label
+3. 开启端口 500、4500 UDP。
+4. --restart=always
+5. 环境变量 \
+```-e TZ=Asia/Shanghai```（在alpine中不可用）
+6. 为了容器持续运行，Command override\
 ```[ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]```
+7. 
