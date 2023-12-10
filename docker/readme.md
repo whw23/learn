@@ -44,7 +44,7 @@ services:
 
 如果需要中国时间（debian支持、alpine不支持）
 
-```-e TZ=Asia/Shanghai```
+```-e TZ="Asia/Shanghai"```
 
 ## 进入容器内
 ```docker exec -u root -it <container_id_or_name> /bin/bash```
