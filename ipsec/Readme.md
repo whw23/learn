@@ -14,4 +14,9 @@ https://github.com/hwdsl2/docker-ipsec-vpn-server
 ```-e TZ=Asia/Shanghai```（在alpine中不可用）
 6. 为了容器持续运行，Command override\
 ```[ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]```
-7. 
+7. 下载脚本
+```
+cd
+wget https://get.vpnsetup.net -O vpn.sh```
+8. 运行脚本\
+```sudo VPN_USER='***' VPN_PASSWORD='***' $VPN_DNS_NAME='********' sh vpn.sh```
