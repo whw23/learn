@@ -20,7 +20,17 @@ cd
 wget https://get.vpnsetup.net -O vpn.sh
 ```
 8. apt update && apt upgrade -y
-9. apt install wget
-10. 运行脚本\
+9. apt install sudo
+10. apt install apt-utils
+11. apt install nano
+12. apt install wget
+13. 通过nano修改脚本
+```
+
+```
+14. 运行脚本
+```
+
+```
 
 
