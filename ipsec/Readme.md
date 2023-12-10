@@ -22,5 +22,5 @@ wget https://get.vpnsetup.net -O vpn.sh
 8. apt update && apt upgrade -y
 9. apt install wget
 10. 运行脚本\
-```VPN_IPSEC_PSK='******' VPN_USER='***' VPN_PASSWORD='***' VPN_DNS_NAME='*******' sh vpn.sh```
+
 
