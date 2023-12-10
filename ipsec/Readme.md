@@ -6,7 +6,7 @@ https://github.com/hwdsl2/docker-ipsec-vpn-server
 
 ## opsec vpn set up with Azure container instances
 1. 镜像\
-```alpine - 版本会变化，当前版本 alpine:3.18```
+```ubuntu:20.04```
 2. DNS name label
 3. 开启端口 500、4500 UDP。
 4. --restart=always
@@ -17,6 +17,8 @@ https://github.com/hwdsl2/docker-ipsec-vpn-server
 7. 下载脚本
 ```
 cd
-wget https://get.vpnsetup.net -O vpn.sh```
+wget https://get.vpnsetup.net -O vpn.sh
+```
 8. 运行脚本\
-```sudo VPN_USER='***' VPN_PASSWORD='***' $VPN_DNS_NAME='********' sh vpn.sh```
+```VPN_IPSEC_PSK='******' VPN_USER='***' VPN_PASSWORD='***' VPN_DNS_NAME='*******' sh vpn.sh```
+
