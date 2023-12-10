@@ -6,7 +6,7 @@ https://github.com/hwdsl2/docker-ipsec-vpn-server
 
 ## opsec vpn set up with Azure container instances
 1. 镜像\
-```ubuntu:20.04```
+```ubuntu:22.04```
 2. DNS name label
 3. 开启端口 500、4500 UDP。
 4. --restart=always
