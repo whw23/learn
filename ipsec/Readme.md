@@ -9,4 +9,4 @@ https://github.com/hwdsl2/docker-ipsec-vpn-server
 2. 开启端口 500、4500 UDP。
 3. --restart=always
 4. 为了容器持续运行，Command override\
-```[ "/bin/sh", "-c", "while true; do echo 'Container is running at $(date)'; sleep 3600; done" ]```
+```[ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]```
