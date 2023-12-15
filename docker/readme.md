@@ -6,7 +6,7 @@ https://docs.docker.com/engine/install/
 
 ## vscode remote development
 
-vscode docker插件 permission denied
+>vscode docker插件 permission denied
 
 1. 确保您的用户已经加入了 `docker` 用户组。您可以使用以下命令将当前用户添加到 `docker` 用户组中：
 
