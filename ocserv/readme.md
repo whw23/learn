@@ -12,4 +12,6 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 > `--preferred-challenges http`: Certbot将使用HTTP验证您的域名。\
 > `--agree-tos`: 您必须同意Certbot的服务条款。\
 > `--register-unsafely-without-email`: 不使用邮箱。
-4. 
+4. 自动更新证书，每周三22点（服务器时间）。
+> `sudo nano /etc/crontab`
+> `00 22   * * 3   root    certbot renew --quiet && systemctl restart ocserv`
