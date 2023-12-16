@@ -3,7 +3,7 @@
 https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tree/master
 需要开启80,443端口
 
-## server
+## server 有域名
 1. `sudo apt-get update && sudo apt update`
 2. `sudo apt install certbot`
 3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email` 
