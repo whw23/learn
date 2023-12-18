@@ -9,10 +9,14 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 2. DNS name label
 3. 开启端口 443、80 TCP,444 UDP。
 4. --restart=always
-5. `apt-get update && apt-get upgrade -y`
-6. `apt install systemd`
-7. `apt install nano`
-8. *`apt install sudo`
+5. Command override
+```
+[ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]
+```
+6. `apt-get update && apt-get upgrade -y`
+7. `apt install systemd`
+8. `apt install nano`
+9. *`apt install sudo`
 
 ## server 有域名 Ubuntu
 https://ocserv.gitlab.io/www/
