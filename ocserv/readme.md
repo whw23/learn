@@ -19,7 +19,7 @@ https://ednovas.xyz/2022/02/16/ocserv/
 > `sudo nano /etc/crontab` 加入行
 > `00 22   * * 3   root    certbot renew --quiet && systemctl restart ocserv`
 5. 安装ocserv
-> `sudo apt install ocserv`
+> `sudo apt install ocserv` ocserv/focal,now 0.12.6-1 amd64 [installed]
 6. 链接证书
 > `cd /etc/ocserv`
 > `sudo ln -s /etc/letsencrypt/live/<vpn.yourdomain.domain>`
