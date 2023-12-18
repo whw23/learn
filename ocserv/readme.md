@@ -38,6 +38,7 @@ sed -i -e 's@auth = "pam@auth = "#auth = "pam"@g' /etc/ocserv/ocserv.conf
 ```bash
 sed -i -e 's@try-mtu-discovery = @try-mtu-discovery = true@g' /etc/ocserv/ocserv.conf
 ```
+此处存在问题
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`try-mtu-discovery = `替换为`try-mtu-discovery = true`，即开启MTU发现。
 
 ```bash
@@ -70,7 +71,7 @@ sed -i -e 's@##auth = "#auth = "pam""@auth = "plain[passwd=/etc/ocserv/ocpasswd]
 ```
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`##auth = "#auth = "pam""`替换为`auth = "plain[passwd=/etc/ocserv/ocpasswd]"`，即设置认证方式为`plain`，并指定密码文件为`/etc/ocserv/ocpasswd`。
 
-证书改为对应、domainname改为对应
+证书改为对应、default-domain改为对应
 
 8. `sudo ocpasswd -c /etc/ocserv/ocpasswd whw23`
 9. `sudo iptables -t nat -A POSTROUTING -j MASQUERADE`
