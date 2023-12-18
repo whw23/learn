@@ -3,7 +3,8 @@
 https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tree/master
 需要开启80,443端口
 
-## server 有域名 Ubuntu
+## server 有域名 Ubuntu[
+https://ocserv.gitlab.io/www/
 1. `sudo apt-get update && sudo apt update`
 2. `sudo apt install certbot`
 3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email` 
@@ -69,4 +70,12 @@ sed -i -e 's@##auth = "#auth = "pam""@auth = "plain[passwd=/etc/ocserv/ocpasswd]
 ```
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`##auth = "#auth = "pam""`替换为`auth = "plain[passwd=/etc/ocserv/ocpasswd]"`，即设置认证方式为`plain`，并指定密码文件为`/etc/ocserv/ocpasswd`。
 
-8. 
+证书改为对应、domainname改为对应
+
+8. `sudo ocpasswd -c /etc/ocserv/ocpasswd whw23`
+9. `sudo iptables -t nat -A POSTROUTING -j MASQUERADE`
+10. `sed -i -e 's@#net.ipv4.ip_forward=@net.ipv4.ip_forward=@g' /etc/sysctl.conf`
+11. `sudo sysctl -p /etc/sysctl.conf`
+12. `sudo service ocserv stop`
+13. `sudo service ocserv start`
+
