@@ -3,7 +3,7 @@
 https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tree/master
 需要开启80,443端口
 
-## server 有域名 Ubuntu[
+## server 有域名 Ubuntu
 https://ocserv.gitlab.io/www/
 https://ednovas.xyz/2022/02/16/ocserv/
 
