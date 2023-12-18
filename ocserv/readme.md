@@ -3,6 +3,17 @@
 https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tree/master
 需要开启80,443端口
 
+## Azure container instance
+1. 镜像\
+```ubuntu:22.04```
+2. DNS name label
+3. 开启端口 443、80 TCP,444 UDP。
+4. --restart=always
+5. `apt-get update && apt-get upgrade -y`
+6. `apt install systemd`
+7. `apt install nano`
+8. *`apt install sudo`
+
 ## server 有域名 Ubuntu
 https://ocserv.gitlab.io/www/
 https://ednovas.xyz/2022/02/16/ocserv/
