@@ -55,10 +55,9 @@ sed -i -e 's@auth = "pam@auth = "#auth = "pam"@g' /etc/ocserv/ocserv.conf
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`auth = "pam`替换为`auth = "#auth = "pam`，即注释掉所有的`auth = "pam`。
 
 ```bash
-sed -i -e 's@try-mtu-discovery = @try-mtu-discovery = true@g' /etc/ocserv/ocserv.conf
+sed -i -e 's@^try-mtu-discovery =.*$@try-mtu-discovery = true@g' /etc/ocserv/ocserv.conf
 ```
-此处存在问题！！！！\
-这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`try-mtu-discovery = `替换为`try-mtu-discovery = true`，即开启MTU发现。
+这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`try-mtu-discovery = `整行替换为`try-mtu-discovery = true`，即开启MTU发现。
 
 ```bash
 sed -i -e 's@dns = @#dns = @g' /etc/ocserv/ocserv.conf
@@ -81,7 +80,7 @@ sed -i -e 's@no-route =@#no-route =@g' /etc/ocserv/ocserv.conf
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`no-route =`替换为`#no-route =`，即注释掉所有的`no-route =`。
 
 ```bash
-sed -i -e 's@cisco-client-compat@cisco-client-compat = true@g' /etc/ocserv/ocserv.conf
+sed -i -e 's@^cisco-client-compat.*$@cisco-client-compat = true@g' /etc/ocserv/ocserv.conf
 ```
 此处存在问题！！！！\
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`cisco-client-compat`替换为`cisco-client-compat = true`，即开启Cisco客户端兼容性。
