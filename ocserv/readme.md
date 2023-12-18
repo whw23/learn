@@ -18,7 +18,7 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 > 指定Asia/Shanghai
 8. `apt install nano`
 9. `apt install cron`
-9. *`apt install sudo`
+10. `apt install iptables`
 
 ## server 有域名 Ubuntu
 https://ocserv.gitlab.io/www/
