@@ -5,6 +5,8 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 
 ## server 有域名 Ubuntu[
 https://ocserv.gitlab.io/www/
+https://ednovas.xyz/2022/02/16/ocserv/
+
 1. `sudo apt-get update && sudo apt update`
 2. `sudo apt install certbot`
 3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email` 
