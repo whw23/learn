@@ -13,6 +13,9 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 ```
 [ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]
 ```
+```
+sudo docker run -d --privileged -p 80:80 -p 443:443 -p 443:443/udp ubuntu:20.04 /bin/bash -c "while true; do echo 'Container is running at '$(date); sleep 3600; done"
+```
 6. `apt-get update && apt-get upgrade -y`
 7. `apt install systemd`
 > 指定Asia/Shanghai
