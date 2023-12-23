@@ -93,6 +93,12 @@ sed -i -e 's@##auth = "#auth = "pam""@auth = "plain[passwd=/etc/ocserv/ocpasswd]
 这行代码将`/etc/ocserv/ocserv.conf`文件中所有的`##auth = "#auth = "pam""`替换为`auth = "plain[passwd=/etc/ocserv/ocpasswd]"`，即设置认证方式为`plain`，并指定密码文件为`/etc/ocserv/ocpasswd`。\
 (10)
 证书改为对应\
+
+```
+server-cert = /etc/letsencrypt/live/vpn.example.com/fullchain.pem
+server-key = /etc/letsencrypt/live/vpn.example.com/privkey.pem
+```
+
 (11)
 default-domain改为对应
 
