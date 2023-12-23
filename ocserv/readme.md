@@ -98,8 +98,11 @@ sed -i -e 's@##auth = "#auth = "pam""@auth = "plain[passwd=/etc/ocserv/ocpasswd]
 server-cert = /etc/letsencrypt/live/vpn.example.com/fullchain.pem
 server-key = /etc/letsencrypt/live/vpn.example.com/privkey.pem
 ```
-
 (11)
+注释掉此行\
+```#ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem```
+
+(12)
 default-domain改为对应
 
 8. `sudo ocpasswd -c /etc/ocserv/ocpasswd whw23`
