@@ -7,7 +7,7 @@ https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/tr
 1. 镜像\
 ```ubuntu:20.04```
 2. DNS name label
-3. 开启端口 443、80 TCP,444 UDP。
+3. 开启端口 443、80 TCP,443 UDP。
 4. --restart=always
 5. Command override
 ```
