@@ -19,5 +19,5 @@ export LANG=zh_CN.UTF-8
 echo "<passwordOfSudo>" | sudo -S startxfce4
 ```
 
-## Xlaunch
+## XLaunch
 用于显示桌面
