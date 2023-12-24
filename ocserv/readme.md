@@ -62,10 +62,7 @@ apt install iptables
 > `00 22   * * 3   root    certbot renew --quiet && systemctl restart ocserv`
 5. 安装ocserv
 > `sudo apt install ocserv` ocserv/focal,now 0.12.6-1 amd64 [installed]
-6. 链接证书
-> `cd /etc/ocserv`
-> `sudo ln -s /etc/letsencrypt/live/<vpn.yourdomain.domain>`
-7. 修改配置文件
+6. 修改配置文件
 `/etc/ocserv/ocserv.conf`配置文件
 
 (1)
@@ -154,28 +151,28 @@ banner为连接成功后的提示。
 banner = "Welcome to whw23 ocserv"
 ```
 
-8. 
+7. 
 ```
 sudo ocpasswd -c /etc/ocserv/ocpasswd whw23
 ```
 
-9. 
+8. 
 ```
 sudo iptables -t nat -A POSTROUTING -j MASQUERADE
 ``` 
 在azure container instances中，这一步没有运行的权限。需要通过--privileged运行容器。
 
-10. 
+9. 
 ```
 sed -i -e 's@#net.ipv4.ip_forward=@net.ipv4.ip_forward=@g' /etc/sysctl.conf
 ```
 
-11. 
+10. 
 ```
 sudo sysctl -p /etc/sysctl.conf
 ```
 
-12. 
+11. 
 ```
 sudo service ocserv stop && sudo service ocserv start
 ```
