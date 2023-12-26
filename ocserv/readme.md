@@ -195,5 +195,8 @@ sudo iptables -t nat -A POSTROUTING -j MASQUERADE
 echo 0
 ```
 ```
+sudo chmod +x /etc/rc.local
+```
+```
 sudo systemctl enable rc-local
 ```
