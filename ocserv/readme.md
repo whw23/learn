@@ -181,7 +181,7 @@ sudo systemctl enable ocserv
 sudo systemctl enable cron
 ```
 
-12.开机设置
+12.开机启动设置
 ```
 sudo nano /etc/rc.local
 ```
