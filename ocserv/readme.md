@@ -127,7 +127,7 @@ server-key = /etc/letsencrypt/live/vpn.example.com/privkey.pem
 ```
 
 (11)
-注释掉此行\
+注释掉此行
 ```
 sed -i 's|ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem|#ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem|' /etc/ocserv/ocserv.conf
 ```
