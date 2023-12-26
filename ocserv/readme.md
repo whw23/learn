@@ -25,23 +25,23 @@ sudo su
 
 8. 需要用到systemctl和timedatectl
 ```
-apt install systemd
+apt install systemd -y
 ```
 > 指定Asia/Shanghai ```sudo timedatectl set-timezone Asia/Shanghai```
 
 9. nano文本编辑器
 ```
-apt install nano
+apt install nano -y
 ```
 
 10. 定时计划
 ```
-apt install cron
+apt install cron -y
 ```
 
 11. iptables安装
 ```
-apt install iptables
+apt install iptables -y
 ```
 
 ## server 有域名 Ubuntu
@@ -50,7 +50,7 @@ apt install iptables
 ※参考：https://ednovas.xyz/2022/02/16/ocserv/
 
 1. `sudo apt-get update && sudo apt update`
-2. `sudo apt install certbot`
+2. `sudo apt install certbot -y`
 3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email` 
 > `certonly`: 该命令只获取证书，而不会自动配置您的服务器。\
 > `--standalone`: Certbot将使用独立的Web服务器来验证您的域名。\
@@ -174,6 +174,22 @@ sudo sysctl -p /etc/sysctl.conf
 
 11. 
 ```
-sudo service ocserv stop && sudo service ocserv start
+sudo systemctl restart ocserv
+```
+```
+sudo systemctl enable ocserv
+sudo systemctl enable cron
 ```
 
+12.开机设置
+```
+sudo nano /etc/rc.local
+```
+插入行
+```
+sudo systemctl restart ocserv
+sudo iptables -t nat -A POSTROUTING -j MASQUERADE
+```
+```
+sudo systemctl enable rc-local
+```
