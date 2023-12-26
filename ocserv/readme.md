@@ -187,8 +187,12 @@ sudo nano /etc/rc.local
 ```
 插入行
 ```
+#!/bin/sh -e
+
 sudo systemctl restart ocserv
 sudo iptables -t nat -A POSTROUTING -j MASQUERADE
+
+echo 0
 ```
 ```
 sudo systemctl enable rc-local
