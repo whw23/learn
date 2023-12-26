@@ -4,12 +4,12 @@
 1. 镜像 ```ubuntu:20.04```
 2. DNS name label
 3. 开启端口 443 TCP/UDP, 80 TCP。
-4. --restart=always
-5. Command override
+4. --restart=always（docker）
+5. Command override（docker）
 ```
 [ "/bin/sh", "-c", "while true; do echo 'Container is running at '$(date); sleep 3600; done" ]
 ```
-```
+```bash
 sudo docker run -d --privileged --restart=always -p 80:80 -p 443:443 -p 443:443/udp ubuntu:20.04 /bin/bash -c "while true; do echo 'Container is running at '$(date); sleep 3600; done"
 ```
 
@@ -129,7 +129,7 @@ server-key = /etc/letsencrypt/live/vpn.example.com/privkey.pem
 (11)
 注释掉此行\
 ```
-#ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem
+sed -i 's|ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem|#ca-cert = /etc/ssl/certs/ssl-cert-snakeoil.pem|' /etc/ocserv/ocserv.conf
 ```
 
 (12)
@@ -186,7 +186,7 @@ sudo systemctl enable cron
 sudo nano /etc/rc.local
 ```
 插入行
-```
+```bash
 #!/bin/sh -e
 
 sudo systemctl restart ocserv
