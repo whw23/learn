@@ -199,4 +199,7 @@ sudo chmod +x /etc/rc.local
 ```
 ```
 sudo systemctl enable rc-local
+sudo systemctl start rc-local
+sudo systemctl status rc-local
 ```
+当前状态为绿色的active
