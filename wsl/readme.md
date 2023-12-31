@@ -9,6 +9,9 @@ sudo apt-get install xfce4
 
 Set environment ~/.bashrc
 ```bash
+sudo nano ~/.bashrc
+```
+```bash
 # xfce4
 export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0.0
 export LIBGL_ALWAYS_INDIRECT=1
