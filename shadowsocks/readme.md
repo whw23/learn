@@ -9,7 +9,7 @@ docker pull shadowsocks/shadowsocks-libev:latest
 ```
 ## run image
 ```
-docker run -d -p customport:8388 -p customport:8388/udp -e PASSWORD=mypassword --restart=always shadowsocks/shadowsocks-libev:latest
+docker run -d -p <customport>:8388 -p <customport>:8388/udp -e PASSWORD=<mypassword> --restart=always shadowsocks/shadowsocks-libev:latest
 ```
 此处修改customport和mypassword\
 默认加密方式 METHOD=aes-256-gcm
