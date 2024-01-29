@@ -13,7 +13,7 @@ docker run -d -p <customport>:8388 -p <customport>:8388/udp -e PASSWORD=<mypassw
 ```
 此处修改customport和mypassword\
 默认加密方式 METHOD=aes-256-gcm
-## shadowsocks-android
+## shadowsocks-android client
 https://github.com/shadowsocks/shadowsocks-android/releases
 ## clash
 [Download clash](https://github.com/Fndroid/clash_for_windows_pkg/releases)
