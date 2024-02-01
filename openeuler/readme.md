@@ -1,5 +1,5 @@
 # openEuler
-(银河麒麟、统信）， 90%类似 Centos。
+(银河麒麟、统信）， 90%类似 CentOS。
 ## 1. 修改ssh端口号
 ```bash
 sudo yum install nano
