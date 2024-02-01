@@ -29,3 +29,9 @@ sudo systemctl stop firewalld
 ```bash
 sudo systemctl restart sshd
 ```
+## 2. 用户
+要列出当前登录的用户，你可以使用 who 命令或 users 命令。
+
+接着，你可以使用 pkill 命令来结束某个用户的所有进程。例如，要登出用户名为 username 的用户，你可以运行 pkill -KILL -u username 命令。
+
+## 3. 
