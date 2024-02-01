@@ -41,7 +41,7 @@ sudo systemctl restart sshd
 ## 3. 安装银河麒麟桌面
 1. 更新软件源
 ```
-sudo dnf update
+sudo dnf update -y
 ```
 2. 安装字体库
 ```
@@ -51,4 +51,7 @@ sudo dnf groupinstall fonts
 ```
 sudo systemctl set-default graphical.target
 ```
-4. 
+4. 安装银河麒麟 UKUI
+```
+sudo dnf install ukui -y
+```
