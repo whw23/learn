@@ -12,7 +12,7 @@ sudo dnf update
 ## 1. 修改ssh端口号
 ```bash
 sudo yum install nano
-sudo nano /etc/sshd/sshd_config
+sudo nano /etc/ssh/sshd_config
 ```
 `# Port 22` 修改为 `Port 23456` 
 
