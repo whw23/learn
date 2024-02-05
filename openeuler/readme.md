@@ -24,7 +24,7 @@ sudo dnf install policycoreutils-python-utils
 sudo semanage port -a -t ssh_port_t -p tcp 23456
 ```
 
-防火墙
+如果有防火墙
 
 ```bash
 sudo systemctl start firewalld
