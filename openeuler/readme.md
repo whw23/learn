@@ -1,3 +1,8 @@
+# centos无缝衔接
+1. RHEL企业版
+2. Alma Linux
+3. Rocky Linux
+
 # openEuler
 (银河麒麟、统信）， 90%类似 CentOS。
 在最新版的CentOS中，yum就是dnf。dnf 是 yum 的下一代版本。
