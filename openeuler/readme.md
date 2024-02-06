@@ -22,7 +22,11 @@ sudo nano /etc/ssh/sshd_config
 sudo dnf install policycoreutils-python-utils
 sudo semanage port -a -t ssh_port_t -p tcp 23456
 ```
-
+```text
+sudo yum provides semanage
+这个命令是做什么的
+sudo yum provides semanage 这个命令在运行时，会查找哪个软件包提供了semanage命令。semanage是一个用于配置SELinux政策的命令行工具。使用yum provides或yum whatprovides可以找到某个特定文件或命令所属的软件包，即使这个文件或命令尚未安装在系统上。通过这个命令，你能够知道需要安装哪个包来获得semanage。通常，semanage包含在policycoreutils-python包或类似名称的软件包中。
+```
 如果有防火墙
 
 ```bash
