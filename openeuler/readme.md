@@ -51,11 +51,13 @@ sudo dnf update -y
 ```
 sudo dnf groupinstall fonts
 ```
-3. 设置开机启动图形化桌面
+3. 安装vnc
+
+4. 设置开机启动图形化桌面
 ```
 sudo systemctl set-default graphical.target
 ```
-4. 安装银河麒麟 UKUI
+5. 安装银河麒麟 UKUI
 ```
 sudo dnf install ukui -y
 ```
