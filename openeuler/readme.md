@@ -42,7 +42,10 @@ sudo systemctl restart sshd
 
 接着，你可以使用 pkill 命令来结束某个用户的所有进程。例如，要登出用户名为 username 的用户，你可以运行 pkill -KILL -u username 命令。
 
-## 3. 安装银河麒麟桌面
+## 3. 安装vnc
+https://www.tecmint.com/install-and-configure-vnc-server-in-centos-7/
+
+## 4. 安装银河麒麟桌面
 1. 更新软件源
 ```
 sudo dnf update -y
@@ -51,13 +54,11 @@ sudo dnf update -y
 ```
 sudo dnf groupinstall fonts
 ```
-3. 安装vnc
-
-4. 设置开机启动图形化桌面
+3. 设置开机启动图形化桌面
 ```
 sudo systemctl set-default graphical.target
 ```
-5. 安装银河麒麟 UKUI
+4. 安装银河麒麟 UKUI
 ```
 sudo dnf install ukui -y
 ```
