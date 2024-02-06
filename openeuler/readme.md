@@ -19,7 +19,6 @@ sudo nano /etc/ssh/sshd_config
 放行selinux
 
 ```bash
-sudo yum provides semanage
 sudo dnf install policycoreutils-python-utils
 sudo semanage port -a -t ssh_port_t -p tcp 23456
 ```
