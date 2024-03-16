@@ -91,6 +91,10 @@ apk add py3-pip
 # 设置时区
 apk add tzdata
 ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+# 虚拟环境
+python3 -m venv myenv
+source myenv/bin/activate
+deactivate
 ```
 
 
