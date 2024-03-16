@@ -80,6 +80,21 @@ services:
 
 ```-e TZ="Asia/Shanghai"```
 
+With in alpine, use apk instead of apt
+```bash
+apk update
+apk upgrade
+apk search xxx
+apk add nano
+apk add python3
+apk add py3-pip
+# 设置时区
+apk add tzdata
+ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+
+
+
 ## 进入容器内
 ```docker exec -u root -it <container_id_or_name> /bin/bash```
 
