@@ -23,9 +23,12 @@ fatal: unable to access 'https://github.com/whw23/Azure_code.git/': Failed to co
 https://github.com/dxil/Blog/issues/3
 
 由于网络原因，导致ping github.com能够Ping通，但是pull和push代码等等到远端时一直报443错误 timeout，于是设置了Git代理走本地ss代理端口，我的端口暴露在1080所以设置命令如下
+
+![image](https://github.com/whw23/learn/assets/58520191/2a4e00d8-d044-4209-adc7-38e1281736e1)
+
 ```git config --global http.proxy http://127.0.0.1:1080```
 
-```git config --global https.proxy https://127.0.0.1:1080``` // 如果是Https，我本地是http 于是没设置这个
+```git config --global https.proxy https://127.0.0.1:1080``` // 如果是Https 本地是http 不用设置这个
 
 取消代理
 
