@@ -15,6 +15,33 @@ docker run -d -p <customport>:8388 -p <customport>:8388/udp -e PASSWORD=<mypassw
 默认加密方式 METHOD=aes-256-gcm
 ## shadowsocks-android client
 https://github.com/shadowsocks/shadowsocks-android/releases
+
+## git pull 超时
+```
+fatal: unable to access 'https://github.com/whw23/Azure_code.git/': Failed to connect to github.com port 443 after 21095 ms: Couldn't connect to server
+```
+https://github.com/dxil/Blog/issues/3
+
+由于网络原因，导致ping github.com能够Ping通，但是pull和push代码等等到远端时一直报443错误 timeout，于是设置了Git代理走本地ss代理端口，我的端口暴露在1080所以设置命令如下
+```git config --global http.proxy http://127.0.0.1:1080```
+
+```git config --global https.proxy https://127.0.0.1:1080``` // 如果是Https，我本地是http 于是没设置这个
+
+取消代理
+
+```
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
+
+查看代理
+
+```
+git config --global http.proxy
+git config --global https.proxy
+npm config delete proxy
+```
+
 ## clash
 [Download clash](https://github.com/Fndroid/clash_for_windows_pkg/releases)
 ## clash.yaml
