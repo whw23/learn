@@ -25,5 +25,5 @@ curl -x 127.0.0.1:3128 www.baidu.com
 # 从局域网内电脑
 curl -x 10.1.0.4:3128 www.baidu.com
 # 从外网
-curl -x 20.205.176.112:3128 www.baidu.com
+curl -x <public-ip>:3128 www.baidu.com
 ```
