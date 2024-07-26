@@ -1,6 +1,6 @@
 # Squid proxy
 
-## Using container
+## Using container / apt install squid
 [Dockerhub squid](https://hub.docker.com/r/ubuntu/squid)
 
 ```
@@ -9,6 +9,7 @@ docker exec -it squid-container /bin/bash
 apt update && apt install nano
 nano /etc/squid/squid.conf
 ```
+![image](https://github.com/user-attachments/assets/66c1c0ef-5169-44d8-8ad1-c66c54dd3873)
 
 ```
 # http_access allow localnet 取消注释，允许局域网
