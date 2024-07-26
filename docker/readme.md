@@ -59,8 +59,9 @@ services:
     ports:
       - "8090:8088"
       - "9000:9000"
-
+    user: "1000:1000" # echo $(id -u):$(id -g)，user和镜像同级，使得容器内外的user是同一个，否则容器内user为uid:0
 ```
+![image](https://github.com/user-attachments/assets/7a028647-c640-4256-a256-65654fbe5ea4)
 - “-d”在后台运行
 - “-e”环境变量
 - “-v”挂载
