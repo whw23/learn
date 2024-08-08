@@ -4,6 +4,11 @@
 3. Rocky Linux
 
 centos7换源 Alma linux [https://almalinux.org/blog/2024-07-09-centos7-updates/](https://almalinux.org/blog/2024-07-09-centos7-updates/)
+```
+sudo curl -o /etc/yum.repos.d/CentOS-Base.repo https://el7.repo.almalinux.org/centos/CentOS-Base.repo
+sudo yum upgrade -y
+```
+
 # openEuler
 (银河麒麟、统信）， 90%类似 CentOS。
 在最新版的CentOS中，yum就是dnf。dnf 是 yum 的下一代版本。
