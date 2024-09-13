@@ -209,5 +209,7 @@ sudo systemctl status rc-local
 # ubuntu sudo命令卡住
 
 由于修改了主机名，而且/etc/hosts中的主机名映射给注销掉了，回到bash中使用sudo命令就变的很卡
-```hostname```
+```
+hostname
+```
 需要在 /etc/hosts中增加本主机名的映射，比如 127.0.1.1 <主机名>
