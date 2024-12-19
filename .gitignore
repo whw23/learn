@@ -1,0 +1,41 @@
+# 忽略操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 忽略Python编译文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 忽略虚拟环境目录
+venv/
+env/
+
+# 忽略日志文件
+*.log
+
+# 忽略配置文件
+*.ini
+*.cfg
+
+# 忽略数据库文件
+*.sqlite3
+
+# 忽略Jupyter Notebook检查点
+.ipynb_checkpoints
+
+# 忽略IDE配置文件
+.vscode/
+.idea/
+
+# 忽略环境变量文件
+.env
+
+# 忽略临时文件
+*.tmp
+*.temp
+
+# 忽略特定项目文件
+node_modules/
+dist/
+build/
