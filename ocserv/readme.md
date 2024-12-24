@@ -213,3 +213,40 @@ sudo systemctl status rc-local
 hostname
 ```
 需要在 /etc/hosts中增加本主机名的映射，比如 127.0.1.1 <主机名>
+
+# 执行sudo iptables -t nat -A POSTROUTING -j MASQUERADE命令后，您的本机无法访问网络
+
+执行`sudo iptables -t nat -A POSTROUTING -j MASQUERADE`命令后，您的本机无法访问网络，可能是由于以下原因：
+
+1. **NAT配置问题**：如果您的机器没有正确配置NAT规则，可能会导致网络连接问题。确保您的网络接口和路由配置正确。
+
+2. **防火墙规则冲突**：新的iptables规则可能与现有的防火墙规则冲突，导致网络连接中断。您可以检查现有的iptables规则：
+   ```bash
+   sudo iptables -L -t nat
+   ```
+
+3. **网络接口配置错误**：确保您的网络接口配置正确，特别是出口接口的IP地址和路由设置。
+
+4. **缺少必要的转发设置**：启用NAT后，您还需要确保内核的IP转发功能已启用。可以通过以下命令启用IP转发：
+   ```bash
+   sudo sysctl -w net.ipv4.ip_forward=1
+   ```
+
+5. **DNS解析问题**：NAT配置可能影响DNS解析，您可以尝试使用IP地址直接访问外部网络，检查是否是DNS问题。
+
+- 1. 检查并清除现有的NAT规则：
+     ```bash
+     sudo iptables -t nat -F
+     ```
+  
+- 2. 确保IP转发已启用：
+     ```bash
+     sudo sysctl -w net.ipv4.ip_forward=1
+     ```
+  
+- 3. 重新添加NAT规则，并确保配置正确：
+     ```bash
+     sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+     ```
+     请将`eth0`替换为您的实际网络接口名称。
+
