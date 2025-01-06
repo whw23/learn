@@ -82,6 +82,7 @@ proguard-rules.pro text
 *.jar binary
 *.jpg binary
 *.mp3 binary
+*.mp4 binary
 *.pbit binary
 *.pfx binary
 *.png binary

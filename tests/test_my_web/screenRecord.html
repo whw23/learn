@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>屏幕录制示例</title>
+</head>
+<body>
+    <h1>屏幕录制示例</h1>
+    <label>
+        <input type="checkbox" id="audioCheckbox"> 启用麦克风
+    </label>
+    <br>
+    <label>
+        <input type="checkbox" id="systemAudioCheckbox"> 启用系统声音
+    </label>
+    <br>
+    <button id="startButton">开始录制</button>
+    <button id="stopButton" disabled>停止录制</button>
+    <video id="recordedVideo" controls></video>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+        let combinedStream;
+
+        document.getElementById('startButton').addEventListener('click', async () => {
+            const videoStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const audioCheckbox = document.getElementById('audioCheckbox');
+            const systemAudioCheckbox = document.getElementById('systemAudioCheckbox');
+            const audioStreams = [];
+
+            if (audioCheckbox.checked) {
+                const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioStreams.push(audioStream);
+            }
+
+            if (systemAudioCheckbox.checked) {
+                const systemAudioStream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: 'default' } });
+                audioStreams.push(systemAudioStream);
+            }
+
+            combinedStream = new MediaStream([...videoStream.getTracks(), ...audioStreams.flatMap(stream => stream.getTracks())]);
+
+            mediaRecorder = new MediaRecorder(combinedStream);
+
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const video = document.getElementById('recordedVideo');
+                video.src = url;
+                recordedChunks = [];
+                combinedStream.getTracks().forEach(track => track.stop()); // 停止所有轨道以释放资源
+            };
+
+            mediaRecorder.start();
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stopButton').disabled = false;
+        });
+
+        document.getElementById('stopButton').addEventListener('click', () => {
+            mediaRecorder.stop();
+            document.getElementById('startButton').disabled = false;
+            document.getElementById('stopButton').disabled = true;
+        });
+    </script>
+</body>
+</html>
