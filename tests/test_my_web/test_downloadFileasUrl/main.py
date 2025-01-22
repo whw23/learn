@@ -9,7 +9,7 @@ from urllib.parse import urlparse, unquote
 app = Flask(__name__)
 
 # 设置存储文件的文件夹路径
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = '/app/static/uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -79,7 +79,7 @@ def upload_file():  # 修改函数名为 upload_file
             f.write(response.content)
 
         # 返回文件的访问 URL
-        file_access_url = f'http://localhost:5000/uploads/{filename}'
+        file_access_url = f"{request.scheme}://{request.host}/uploads/{filename}"
         return jsonify({"file_url": file_access_url})  # 修改键为 file_url
 
     except requests.exceptions.RequestException as e:
