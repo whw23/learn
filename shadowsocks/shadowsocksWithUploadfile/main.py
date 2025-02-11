@@ -17,7 +17,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # API 密钥配置
-API_KEY = 'dnaiccoteam'
+API_KEY = '********'  # 请替换为您的 API 密钥
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():  # 修改函数名为 upload_file
