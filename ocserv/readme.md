@@ -51,12 +51,13 @@ apt install iptables -y
 
 1. `sudo apt-get update && sudo apt update`
 2. `sudo apt install certbot -y`
-3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email` 
+3. `sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email -d example.com` 
 > `certonly`: 该命令只获取证书，而不会自动配置您的服务器。\
 > `--standalone`: Certbot将使用独立的Web服务器来验证您的域名。\
 > `--preferred-challenges http`: Certbot将使用HTTP验证您的域名。\
 > `--agree-tos`: 您必须同意Certbot的服务条款。\
-> `--register-unsafely-without-email`: 不使用邮箱。
+> `--register-unsafely-without-email`: 不使用邮箱。\
+> `-d`: 域名 支持多域名: `-d example1.com -d example2.com`
 4. 自动更新证书，每周三22点（服务器时间）。
 > `sudo nano /etc/crontab` 加入行
 > `00 22   * * 3   root    certbot renew --quiet && systemctl restart ocserv`
