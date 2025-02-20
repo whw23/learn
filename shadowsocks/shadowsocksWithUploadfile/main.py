@@ -91,5 +91,5 @@ def serve_image(filename):  # 可以考虑重命名为 serve_file
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=443, debug=True, ssl_context=('/etc/letsencrypt/live/sswithuploadfile.e8a7eggzemerevby.westus2.azurecontainer.io/fullchain.pem', '/etc/letsencrypt/live/sswithuploadfile.e8a7eggzemerevby.westus2.azurecontainer.io/privkey.pem'))
-
+    # app.run(host="0.0.0.0", port=443, debug=True, ssl_context=('/etc/letsencrypt/live/sswithuploadfile.e8a7eggzemerevby.westus2.azurecontainer.io/fullchain.pem', '/etc/letsencrypt/live/sswithuploadfile.e8a7eggzemerevby.westus2.azurecontainer.io/privkey.pem'))
+    app.run(host="0.0.0.0", port=12222, debug=True)

@@ -17,7 +17,7 @@ modify(type="dir.back|drive.back" where=this.id==id.customize_this_folder pos=1 
 
 modify(where=str.equals(this.name, ["在终端中打开(T)", "在 Ubuntu 中打开", "Open Git GUI here","Open Git Bash here"]) pos="bottom" menu="终端(I)")
 
-modify(where=str.equals(this.name, ["通过 Code 打开","通过 WindSurf 打开", "Open with IDEA", "Open with PyCharm","Open with Visual Studio"]) pos="bottom" menu="Develop/editors")
+modify(where=str.equals(this.name, ["通过 Code 打开","通过 WindSurf 打开", "Open with IDEA", "Open with PyCharm","Open with Visual Studio"]) pos="bottom" menu="editors")
 
 modify(mode=mode.multiple
 	where=this.id(
