@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: elasticsearch:8.17.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node        # 单节点模式
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g        # 内存分配（根据服务器配置调整）
+      - xpack.security.enabled=false      # 关闭安全验证（简化访问）
+    volumes:
+      - es_data:/usr/share/elasticsearch/data  # 持久化数据
+      - es_plugins:/usr/share/elasticsearch/plugins  # 插件目录
+    ports:
+      - "9200:9200"   # REST API 端口
+      - "9300:9300"   # 集群通信端口
+    networks:
+      - elastic_net
+    restart: unless-stopped  # 自动重启
+
+  kibana:
+    image: kibana:8.17.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200  # 通过服务名访问ES
+      - I18N_LOCALE=zh-CN                              # 中文界面
+    ports:
+      - "5601:5601"    # Kibana Web 端口
+    networks:
+      - elastic_net
+    depends_on:
+      - elasticsearch  # 依赖ES服务
+    restart: unless-stopped
+
+volumes:
+  es_data:
+  es_plugins:
+
+networks:
+  elastic_net:
+    driver: bridge

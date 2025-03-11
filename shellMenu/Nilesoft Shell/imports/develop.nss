@@ -1,5 +1,5 @@
 ﻿
-menu(mode="single" title='editors' image=\uE17A)
+menu(mode="single" title='&Editors' image=\uE17A)
 {
     item(type='file' mode="single" title='Windows notepad' image cmd='@sys.bin\notepad.exe' args='"@sel.path"')
     separator
@@ -7,6 +7,13 @@ menu(mode="single" title='editors' image=\uE17A)
     
     
 }
+
+menu(mode="single" title='&PowerToys')
+{
+    
+}
+
+
 menu(mode="multiple" title='&Develop' sep=sep.bottom image=\uE26E)
 {
     menu(mode="multiple" title='dotnet' image=\uE143)
