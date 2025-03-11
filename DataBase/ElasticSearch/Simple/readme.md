@@ -1,7 +1,3 @@
-# Elastic Search
-
-[Elastic search 概述](./ElasticSearch.mp4)
-
 ## 通过docker 启动 Elastic Search
 
 - **Elasticsearch**
