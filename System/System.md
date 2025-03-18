@@ -1,0 +1,2 @@
+[[OpenEuler]]
+[[WSL]]

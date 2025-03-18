@@ -17,7 +17,7 @@
 
 ## 通过docker compose 启动 Elastic Search + Kibana
 
-```
+```bash
 docker compose up -d
 ```
 

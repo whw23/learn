@@ -167,3 +167,5 @@ rules:
   - GEOIP,CN,DIRECT
   - MATCH,PROXY
 ```
+
+[[shadowsocksWithUploadfile]]

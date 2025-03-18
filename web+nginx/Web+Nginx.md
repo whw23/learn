@@ -3,3 +3,6 @@
 ```
 sudo certbot certonly --standalone --preferred-challenges http --agree-tos --register-unsafely-without-email -d example.com
 ```
+
+[[Nginx]]
+[[Test_my_web]]
