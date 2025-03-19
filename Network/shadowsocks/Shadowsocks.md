@@ -168,4 +168,3 @@ rules:
   - MATCH,PROXY
 ```
 
-[[shadowsocksWithUploadfile]]

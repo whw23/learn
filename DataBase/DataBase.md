@@ -1,4 +1,4 @@
 # DataBase
 
-[[ElasticSearch|ElasticSearch]]
-[[MongoDB|MongoDB]]
+[ElasticSearch](ElasticSearch/ElasticSearch.md)
+[MongoDB](MongoDB/MongoDB.md)
