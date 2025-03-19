@@ -1,6 +1,6 @@
 # Study Notes
 
-> 当前文件夹使用 [Obsidian](https://obsidian.md/) 用于笔记管理
+>当前文件夹使用 [Obsidian](https://obsidian.md/) 用于笔记管理
 
 [DataBase](DataBase/DataBase.md)  
 [Docker](Docker/Docker.md)  

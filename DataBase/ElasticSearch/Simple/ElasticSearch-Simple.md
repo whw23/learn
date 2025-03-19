@@ -26,7 +26,7 @@ docker compose up -d
 
 首先使用一个或多个 `dense_vector`字段创建索引。
 
-```
+```http
 PUT /my-index
 {
   "mappings": {
@@ -48,7 +48,7 @@ PUT /my-index
 
 添加数据到 Elasticsearch。
 
-```
+```http
 POST /my-index/_doc
 {
   "vector": [1, 5, -20],
@@ -61,7 +61,7 @@ POST /my-index/_doc
 
 现在您已准备就绪，可以通过搜索和集成来浏览数据。
 
-```
+```http
 POST /my-index/_search
 {
   "size" : 3,
@@ -73,3 +73,38 @@ POST /my-index/_search
   }
 }
 ```
+
+Sample embeddings: 
+```mermaid
+
+graph LR
+
+    A[用户请求] --> B[FastAPI Server]
+
+    B --> C[routers/user_routes.py]
+
+    B --> D[routers/models_routes.py]
+
+    B --> E[routers/llm_routes.py]
+
+    B --> F[routers/conversations_routes.py]
+
+    E --> G[LLM API]
+
+    G --> H[Elasticsearch Index: knowledge_database]
+
+    H --> L[Embeddings API]
+
+    L --> H[Elasticsearch]
+
+    E --> H[Elasticsearch]
+
+    C --> I[MongoDB: users]
+
+    D --> J[MongoDB: models]
+
+    F --> K[MongoDB: conversations & messages]
+
+    G  --> M[MongoDB: chat_logs]
+
+```  
