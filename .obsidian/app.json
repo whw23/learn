@@ -1,0 +1,8 @@
+{
+  "promptDelete": false,
+  "strictLineBreaks": true,
+  "alwaysUpdateLinks": true,
+  "newLinkFormat": "relative",
+  "showUnsupportedFiles": true,
+  "useMarkdownLinks": true
+}

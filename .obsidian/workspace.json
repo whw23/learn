@@ -1,0 +1,223 @@
+{
+  "main": {
+    "id": "89c3b54aa3a945d6",
+    "type": "split",
+    "children": [
+      {
+        "id": "8fbbb200763e81a8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "26a16d1dc785395a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false,
+                "backlinks": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c46846efe77027cb",
+    "type": "split",
+    "children": [
+      {
+        "id": "06ec709f2946e188",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3100ec01643c23ee",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "d2ce7a9474a4b6bc",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e91b5fcdf848cdab",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          },
+          {
+            "id": "038ca7a35fe60a74",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0ec181b6358f6a87",
+    "type": "split",
+    "children": [
+      {
+        "id": "359c2c045b6d895b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2a639daacc9e4a6b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "README 的反向链接列表"
+            }
+          },
+          {
+            "id": "9dbf9ef7bdad6929",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "出链"
+            }
+          },
+          {
+            "id": "d6649c170422d520",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "b62a819985fae0d2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "obsidian-excalidraw-plugin:新建绘图文件": false,
+      "obsidian-git:Open Git source control": false,
+      "vscode-editor:新建代码文件": false,
+      "media-extended:Open media": false
+    }
+  },
+  "active": "26a16d1dc785395a",
+  "lastOpenFiles": [
+    "DataBase/ElasticSearch/ElasticSearch.md",
+    "DataBase/ElasticSearch/ElasticSearch.mp4",
+    "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
+    "DataBase/DataBase.md",
+    "README.md",
+    "Pasted image 20250319121628.png",
+    "web+nginx/nginx/Nginx.md",
+    "System/System.md",
+    "shellMenu/ShellMenu.md",
+    "Network/Networking.md",
+    "Docker/Docker.md",
+    "web+nginx/test_my_web/fetch-demonstration/fetch-demonstration.md",
+    "web+nginx/test_my_web/fastAPI/fastAPI.md",
+    "web+nginx/Web+Nginx.md",
+    "web+nginx/test_my_web/fastAPI/testSamples.py",
+    "web+nginx/test_my_web/fastAPI/test_steam_output.py",
+    "web+nginx/test_my_web/Test_my_web.md",
+    "DataBase/ElasticSearch/Official/ElasticSearch-Official.md",
+    "DataBase/ElasticSearch/ElasticSearch.mp4.crdownload",
+    "Network/squid/Squid.md",
+    "Network/shadowsocks/Shadowsocks.md",
+    "Network/shadowsocks/shadowsocksWithUploadfile/shadowsocksWithUploadfile.md",
+    "Network/shadowsocks/shadowsocksWithUploadfile/main.py",
+    "DataBase/MongoDB/MongoDB.md",
+    "DataBase/MongoDB/2.异步.py",
+    "DataBase/MongoDB/1.同步.py",
+    "未命名.canvas",
+    "Excalidraw/Drawing 2025-03-18 18.23.05.excalidraw.md",
+    "Excalidraw",
+    "shellMenu/ubuntu.png",
+    "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb",
+    "DataBase/ElasticSearch/Official/embeddings/embedding_es.ipynb",
+    "Excalidraw/Drawing 2025-03-18 18.05.17.excalidraw.md",
+    "Excalidraw/Drawing 2025-03-18 17.57.04.excalidraw.md",
+    "2025-03-18.md",
+    "Excalidraw/Drawing 2025-03-18 17.44.19.excalidraw.md"
+  ]
+}
