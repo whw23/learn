@@ -4,22 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "621fb7f2718141ea",
+        "id": "42de22a9767a980d",
         "type": "tabs",
         "children": [
           {
-            "id": "2620e9c2e4fd1715",
+            "id": "97521068e8634571",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "split-diff-view",
               "state": {
-                "file": "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
-                "mode": "source",
-                "source": false,
-                "backlinks": false
+                "aFile": ".obsidian/plugins/obsidian-git/main.js",
+                "bFile": ".obsidian/plugins/obsidian-git/main.js",
+                "aRef": ""
               },
-              "icon": "lucide-file",
-              "title": "ElasticSearch-Simple"
+              "icon": "diff",
+              "title": "Diff: main.js"
             }
           }
         ]
@@ -162,14 +161,23 @@
               "icon": "lucide-tags",
               "title": "标签"
             }
+          },
+          {
+            "id": "afb5f66d59e3a6d4",
+            "type": "leaf",
+            "state": {
+              "type": "mermaid-toolbar-view",
+              "state": {},
+              "icon": "trident-custom",
+              "title": "Mermaid Toolbar"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -181,18 +189,21 @@
       "command-palette:打开命令面板": false,
       "obsidian-excalidraw-plugin:新建绘图文件": false,
       "obsidian-git:Open Git source control": false,
-      "vscode-editor:新建代码文件": false,
-      "media-extended:Open media": false,
+      "vscode-editor:新建代码文件": true,
+      "media-extended:Open media": true,
       "pdf-plus:PDF++: Toggle auto-copy": false,
       "pdf-plus:PDF++: Toggle auto-focus": false,
-      "pdf-plus:PDF++: Toggle auto-paste": false
+      "pdf-plus:PDF++: Toggle auto-paste": false,
+      "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "2620e9c2e4fd1715",
+  "active": "97521068e8634571",
   "lastOpenFiles": [
-    "DataBase/ElasticSearch/ElasticSearch.md",
     "README.md",
+    "Excalidraw/Drawing 2025-03-20 15.06.46.excalidraw.md",
+    "Excalidraw",
     "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
+    "DataBase/ElasticSearch/ElasticSearch.md",
     "DataBase/ElasticSearch/Official/ElasticSearch-Official.md",
     "2025-03-19.md",
     "DataBase/ElasticSearch/ElasticSearch.mp4",
@@ -219,7 +230,6 @@
     "DataBase/MongoDB/2.异步.py",
     "DataBase/MongoDB/1.同步.py",
     "Excalidraw/Drawing 2025-03-18 18.23.05.excalidraw.md",
-    "Excalidraw",
     "shellMenu/ubuntu.png",
     "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb",
     "DataBase/ElasticSearch/Official/embeddings/embedding_es.ipynb",
