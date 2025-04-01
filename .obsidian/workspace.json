@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "42de22a9767a980d",
+        "id": "5b67a3c38d7f60b2",
         "type": "tabs",
         "children": [
           {
-            "id": "97521068e8634571",
+            "id": "8fc24b7a837580ba",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
-              "state": {
-                "aFile": ".obsidian/plugins/obsidian-git/main.js",
-                "bFile": ".obsidian/plugins/obsidian-git/main.js",
-                "aRef": ""
-              },
-              "icon": "diff",
-              "title": "Diff: main.js"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
             }
           }
         ]
@@ -118,8 +114,7 @@
               "title": "ElasticSearch-Simple 的反向链接列表"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
@@ -139,12 +134,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Docker/Docker.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Docker 的出链列表"
+              "title": "出链"
             }
           },
           {
@@ -172,8 +166,7 @@
               "title": "Mermaid Toolbar"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "horizontal",
@@ -197,8 +190,13 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "97521068e8634571",
+  "active": "3100ec01643c23ee",
   "lastOpenFiles": [
+    "DataBase/MongoDB/MongoDB.md",
+    "DataBase/DataBase.md",
+    "DataBase/Neo4j/Neo4j.md",
+    "DataBase/Neo4j",
+    "Docker/Docker.md",
     "README.md",
     "Excalidraw/Drawing 2025-03-20 15.06.46.excalidraw.md",
     "Excalidraw",
@@ -208,9 +206,6 @@
     "2025-03-19.md",
     "DataBase/ElasticSearch/ElasticSearch.mp4",
     "未命名.canvas",
-    "DataBase/MongoDB/MongoDB.md",
-    "Docker/Docker.md",
-    "DataBase/DataBase.md",
     "Pasted image 20250319121628.png",
     "web+nginx/nginx/Nginx.md",
     "System/System.md",
@@ -232,7 +227,6 @@
     "Excalidraw/Drawing 2025-03-18 18.23.05.excalidraw.md",
     "shellMenu/ubuntu.png",
     "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb",
-    "DataBase/ElasticSearch/Official/embeddings/embedding_es.ipynb",
     "Excalidraw/Drawing 2025-03-18 18.05.17.excalidraw.md",
     "Excalidraw/Drawing 2025-03-18 17.57.04.excalidraw.md",
     "2025-03-18.md",
