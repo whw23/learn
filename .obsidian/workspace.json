@@ -21,6 +21,20 @@
               "icon": "lucide-file",
               "title": "Neo4j"
             }
+          },
+          {
+            "id": "459c77a6668cfb25",
+            "type": "leaf",
+            "state": {
+              "type": "webviewer",
+              "state": {
+                "url": "https://blog.csdn.net/python1234_/article/details/144762627",
+                "title": "Neo4j GraphRAG：1个Python包，轻松搞定RAG + 知识图谱！_python graphrag包-CSDN博客",
+                "mode": "webview"
+              },
+              "icon": "globe-2",
+              "title": "Neo4j GraphRAG：1个Python包，轻松搞定RAG + 知识图谱！_python graphrag包-CSDN博客"
+            }
           }
         ]
       }
@@ -91,32 +105,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
+                "file": "DataBase/Neo4j/Neo4j.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "ElasticSearch-Simple 的大纲"
-            }
-          },
-          {
-            "id": "2a639daacc9e4a6b",
-            "type": "leaf",
-            "state": {
-              "type": "backlink",
-              "state": {
-                "file": "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
-                "collapseAll": false,
-                "extraContext": false,
-                "sortOrder": "alphabetical",
-                "showSearch": false,
-                "searchQuery": "",
-                "backlinkCollapsed": false,
-                "unlinkedCollapsed": true
-              },
-              "icon": "links-coming-in",
-              "title": "ElasticSearch-Simple 的反向链接列表"
+              "title": "Neo4j 的大纲"
             }
           }
         ]
@@ -141,10 +136,29 @@
               "state": {
                 "file": "DataBase/Neo4j/Neo4j.md",
                 "linksCollapsed": false,
-                "unlinkedCollapsed": true
+                "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
               "title": "Neo4j 的出链列表"
+            }
+          },
+          {
+            "id": "2a639daacc9e4a6b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "DataBase/Neo4j/Neo4j.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Neo4j 的反向链接列表"
             }
           },
           {
@@ -163,7 +177,7 @@
             }
           },
           {
-            "id": "afb5f66d59e3a6d4",
+            "id": "29dd1ec33a3bbbb8",
             "type": "leaf",
             "state": {
               "type": "mermaid-toolbar-view",
@@ -172,7 +186,8 @@
               "title": "Mermaid Toolbar"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -198,10 +213,11 @@
   },
   "active": "8fc24b7a837580ba",
   "lastOpenFiles": [
+    "DataBase/Neo4j/Neo4j.md",
+    "2025-04-01.md",
+    "DataBase/DataBase.md",
     "DataBase/MongoDB/MongoDB.md",
     "DataBase/MongoDB/2.异步.py",
-    "DataBase/DataBase.md",
-    "DataBase/Neo4j/Neo4j.md",
     "DataBase/Neo4j",
     "Docker/Docker.md",
     "README.md",
