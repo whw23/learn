@@ -12,8 +12,9 @@ docker run \
 ```
 
 test run
+
 ```shell
-docker run --restart=unless-stopped -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=neo4j/123456 --name neo4j neo4j
+docker run -d --restart=unless-stopped -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=neo4j/12345678 --name neo4j neo4j
 ```
 
-Sample: [Neo4j GraphRAG](https://blog.csdn.net/python1234_/article/details/144762627)      
+Sample: [Neo4j GraphRAG](https://blog.csdn.net/python1234_/article/details/144762627)
