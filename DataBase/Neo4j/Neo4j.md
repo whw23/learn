@@ -1,6 +1,7 @@
 # 通过Docker启动
 
 [Getting started with Neo4j in Docker - Operations Manual](https://neo4j.com/docs/operations-manual/current/docker/introduction/)
+
 ```shell
 docker run \
     --restart always \
@@ -8,6 +9,11 @@ docker run \
     --env NEO4J_AUTH=neo4j/your_password \
     --volume=/path/to/your/data:/data \
     neo4j
+```
+
+test run
+```shell
+
 ```
 
 Sample: [Neo4j GraphRAG](https://blog.csdn.net/python1234_/article/details/144762627)      
