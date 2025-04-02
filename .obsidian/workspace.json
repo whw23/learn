@@ -21,20 +21,6 @@
               "icon": "lucide-file",
               "title": "Neo4j"
             }
-          },
-          {
-            "id": "459c77a6668cfb25",
-            "type": "leaf",
-            "state": {
-              "type": "webviewer",
-              "state": {
-                "url": "https://blog.csdn.net/python1234_/article/details/144762627",
-                "title": "Neo4j GraphRAG：1个Python包，轻松搞定RAG + 知识图谱！_python graphrag包-CSDN博客",
-                "mode": "webview"
-              },
-              "icon": "globe-2",
-              "title": "Neo4j GraphRAG：1个Python包，轻松搞定RAG + 知识图谱！_python graphrag包-CSDN博客"
-            }
           }
         ]
       }
@@ -213,9 +199,9 @@
   },
   "active": "8fc24b7a837580ba",
   "lastOpenFiles": [
+    "DataBase/DataBase.md",
     "DataBase/Neo4j/Neo4j.md",
     "2025-04-01.md",
-    "DataBase/DataBase.md",
     "DataBase/MongoDB/MongoDB.md",
     "DataBase/MongoDB/2.异步.py",
     "DataBase/Neo4j",
