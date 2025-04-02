@@ -4,17 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "39defb58db58a4d5",
+        "id": "d87de899e94eb9b6",
         "type": "tabs",
         "children": [
           {
-            "id": "7a7a5c74dbb7509a",
+            "id": "11ef709ce1c67e8f",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "type": "markdown",
+              "state": {
+                "file": "DataBase/Neo4j/Neo4j.md",
+                "mode": "source",
+                "source": false,
+                "backlinks": false
+              },
+              "icon": "lucide-file",
+              "title": "Neo4j"
             }
           }
         ]
@@ -86,16 +91,16 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "DataBase/Neo4j/Neo4j.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "大纲"
+              "title": "Neo4j 的大纲"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
@@ -115,11 +120,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "DataBase/Neo4j/Neo4j.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
-              "title": "出链"
+              "title": "Neo4j 的出链列表"
             }
           },
           {
@@ -128,6 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "DataBase/Neo4j/Neo4j.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -137,7 +144,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "反向链接"
+              "title": "Neo4j 的反向链接列表"
             }
           },
           {
@@ -190,7 +197,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "7a7a5c74dbb7509a",
+  "active": "11ef709ce1c67e8f",
   "lastOpenFiles": [
     "README.md",
     "web+nginx/Web+Nginx.md",

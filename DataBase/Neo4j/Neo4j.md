@@ -1,1 +1,4 @@
-Sample: [Neo4j GraphRAG：1个Python包，轻松搞定RAG + 知识图谱！_python graphrag包-CSDN博客](https://blog.csdn.net/python1234_/article/details/144762627)  
+通过Docker启动
+
+
+Sample: [Neo4j GraphRAG](https://blog.csdn.net/python1234_/article/details/144762627)      
