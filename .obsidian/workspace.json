@@ -4,22 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "5b67a3c38d7f60b2",
+        "id": "39defb58db58a4d5",
         "type": "tabs",
         "children": [
           {
-            "id": "8fc24b7a837580ba",
+            "id": "7a7a5c74dbb7509a",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
+                "file": "System/wsl/WSL.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": false
               },
               "icon": "lucide-file",
-              "title": "Neo4j"
+              "title": "WSL"
             }
           }
         ]
@@ -91,13 +91,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
+                "file": "System/wsl/WSL.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Neo4j 的大纲"
+              "title": "WSL 的大纲"
             }
           }
         ]
@@ -120,12 +120,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
+                "file": "System/wsl/WSL.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
-              "title": "Neo4j 的出链列表"
+              "title": "WSL 的出链列表"
             }
           },
           {
@@ -134,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
+                "file": "System/wsl/WSL.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -144,7 +144,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Neo4j 的反向链接列表"
+              "title": "WSL 的反向链接列表"
             }
           },
           {
@@ -197,29 +197,34 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "8fc24b7a837580ba",
+  "active": "7a7a5c74dbb7509a",
   "lastOpenFiles": [
+    "System/openeuler/OpenEuler.md",
+    "System/wsl/WSL.md",
+    "System/System.md",
+    "shellMenu/ShellMenu.md",
+    "DataBase/ElasticSearch/Official/ElasticSearch-Official.md",
+    "Network/Networking.md",
+    "Network/ocserv/Ocserv.md",
+    "Docker/Docker.md",
     "DataBase/DataBase.md",
     "DataBase/Neo4j/Neo4j.md",
-    "2025-04-01.md",
     "DataBase/MongoDB/MongoDB.md",
+    "DataBase/MongoDB/1.同步.py",
+    "embeddings.md",
+    "DataBase/ElasticSearch/ElasticSearch.md",
+    "2025-04-01.md",
     "DataBase/MongoDB/2.异步.py",
     "DataBase/Neo4j",
-    "Docker/Docker.md",
     "README.md",
     "Excalidraw/Drawing 2025-03-20 15.06.46.excalidraw.md",
     "Excalidraw",
     "DataBase/ElasticSearch/Simple/ElasticSearch-Simple.md",
-    "DataBase/ElasticSearch/ElasticSearch.md",
-    "DataBase/ElasticSearch/Official/ElasticSearch-Official.md",
     "2025-03-19.md",
     "DataBase/ElasticSearch/ElasticSearch.mp4",
     "未命名.canvas",
     "Pasted image 20250319121628.png",
     "web+nginx/nginx/Nginx.md",
-    "System/System.md",
-    "shellMenu/ShellMenu.md",
-    "Network/Networking.md",
     "web+nginx/test_my_web/fetch-demonstration/fetch-demonstration.md",
     "web+nginx/test_my_web/fastAPI/fastAPI.md",
     "web+nginx/Web+Nginx.md",
@@ -231,12 +236,7 @@
     "Network/shadowsocks/Shadowsocks.md",
     "Network/shadowsocks/shadowsocksWithUploadfile/shadowsocksWithUploadfile.md",
     "Network/shadowsocks/shadowsocksWithUploadfile/main.py",
-    "DataBase/MongoDB/1.同步.py",
-    "Excalidraw/Drawing 2025-03-18 18.23.05.excalidraw.md",
     "shellMenu/ubuntu.png",
-    "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb",
-    "Excalidraw/Drawing 2025-03-18 18.05.17.excalidraw.md",
-    "Excalidraw/Drawing 2025-03-18 17.57.04.excalidraw.md",
-    "2025-03-18.md"
+    "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb"
   ]
 }

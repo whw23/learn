@@ -24,3 +24,7 @@ echo "<passwordOfSudo>" | sudo -S startxfce4
 
 ## XLaunch
 用于显示桌面
+
+## 一些其他的方式
+参考[openai-cua-sample-app/Dockerfile at main · openai/openai-cua-sample-app](https://github.com/openai/openai-cua-sample-app/blob/main/Dockerfile)  
+xfce4 + Xvfb + vnc
