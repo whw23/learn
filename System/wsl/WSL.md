@@ -1,6 +1,10 @@
 # wsl2
 
-https://segmentfault.com/a/1190000038967921
+https://segmentfault.com/a/1190000038967921  
+
+```cmd
+wsl --install Ubuntu-24.04 --location D:\Ubuntu2404
+```
 
 ##  xface4
 ```bash
