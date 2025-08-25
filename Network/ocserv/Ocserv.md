@@ -1,5 +1,8 @@
 # Ocserv
 
+## dockerhub
+https://hub.docker.com/r/tommylau/ocserv
+
 ## Prerequisites (docker / ubuntu server)
 1. 镜像 ```ubuntu:20.04```
 2. DNS name label
