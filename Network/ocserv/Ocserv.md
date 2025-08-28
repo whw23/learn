@@ -1,7 +1,35 @@
 # Ocserv
 
-## dockerhub
+## Dockerhub
+### **无分流**  
+https://hub.docker.com/r/ogi4i/ocserv
+```
+docker pull ogi4i/ocserv
+docker run --name ocserv --privileged -p 443:443 -p 443:443/udp -d ogi4i/ocserv
+```  
+添加用户
+```
+docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd username
+Enter password:
+Re-enter password:
+```
+### **有分流**  
 https://hub.docker.com/r/tommylau/ocserv
+```
+docker pull tommylau/ocserv
+docker run --name ocserv --privileged -p 443:443 -p 443:443/udp -d tommylau/ocserv
+```
+添加用户
+```
+docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd -g "Route,All" username
+Enter password:
+Re-enter password:
+```
+删除用户
+```
+docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd -d test
+```
+
 
 ## Prerequisites (docker / ubuntu server)
 1. 镜像 ```ubuntu:20.04```
