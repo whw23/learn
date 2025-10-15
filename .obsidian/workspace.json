@@ -11,15 +11,10 @@
             "id": "11ef709ce1c67e8f",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
-                "mode": "source",
-                "source": false,
-                "backlinks": false
-              },
-              "icon": "lucide-file",
-              "title": "Neo4j"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "关系图谱"
             }
           }
         ]
@@ -100,7 +95,8 @@
               "title": "Neo4j 的大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -134,7 +130,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -144,7 +139,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Neo4j 的反向链接列表"
+              "title": "反向链接"
             }
           },
           {
@@ -168,8 +163,8 @@
             "state": {
               "type": "mermaid-toolbar-view",
               "state": {},
-              "icon": "trident-custom",
-              "title": "Mermaid Toolbar"
+              "icon": "lucide-ghost",
+              "title": "mermaid-toolbar-view"
             }
           }
         ],
@@ -181,6 +176,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:创建新数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -189,8 +185,8 @@
       "command-palette:打开命令面板": false,
       "obsidian-excalidraw-plugin:新建绘图文件": false,
       "obsidian-git:Open Git source control": false,
-      "vscode-editor:新建代码文件": true,
-      "media-extended:Open media": true,
+      "vscode-editor:新建代码文件": false,
+      "media-extended:Open media": false,
       "pdf-plus:PDF++: Toggle auto-copy": false,
       "pdf-plus:PDF++: Toggle auto-focus": false,
       "pdf-plus:PDF++: Toggle auto-paste": false,
@@ -199,6 +195,7 @@
   },
   "active": "11ef709ce1c67e8f",
   "lastOpenFiles": [
+    "DataBase/DataBase.md",
     "DataBase/Neo4j/Neo4j.md",
     "README.md",
     "web+nginx/Web+Nginx.md",
@@ -211,7 +208,6 @@
     "Network/Networking.md",
     "Network/ocserv/Ocserv.md",
     "Docker/Docker.md",
-    "DataBase/DataBase.md",
     "DataBase/MongoDB/MongoDB.md",
     "DataBase/MongoDB/1.同步.py",
     "embeddings.md",
