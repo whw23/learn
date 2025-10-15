@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "d87de899e94eb9b6",
+        "id": "fa73e7decf0051a6",
         "type": "tabs",
         "children": [
           {
-            "id": "11ef709ce1c67e8f",
+            "id": "0689d45f6935fb6d",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "关系图谱"
+              "icon": "lucide-file",
+              "title": "新标签页"
             }
           }
         ]
@@ -193,8 +193,9 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "11ef709ce1c67e8f",
+  "active": "038ca7a35fe60a74",
   "lastOpenFiles": [
+    "未命名.base",
     "DataBase/DataBase.md",
     "DataBase/Neo4j/Neo4j.md",
     "README.md",
@@ -230,7 +231,6 @@
     "DataBase/ElasticSearch/ElasticSearch.mp4.crdownload",
     "Network/squid/Squid.md",
     "Network/shadowsocks/Shadowsocks.md",
-    "Network/shadowsocks/shadowsocksWithUploadfile/shadowsocksWithUploadfile.md",
     "Network/shadowsocks/shadowsocksWithUploadfile/main.py",
     "shellMenu/ubuntu.png",
     "DataBase/ElasticSearch/Official/embeddings/embedding_test.ipynb"
