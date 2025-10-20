@@ -95,8 +95,7 @@
               "title": "Neo4j 的大纲"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
@@ -193,7 +192,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "038ca7a35fe60a74",
+  "active": "3100ec01643c23ee",
   "lastOpenFiles": [
     "未命名.base",
     "DataBase/DataBase.md",
