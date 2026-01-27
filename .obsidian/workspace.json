@@ -11,10 +11,10 @@
             "id": "fb4cbc5aed6b7746",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "新标签页"
+              "icon": "lucide-git-fork",
+              "title": "关系图谱"
             }
           }
         ]
@@ -171,11 +171,12 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
-      "bases:创建新数据库": false,
+      "bases:新建数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -192,7 +193,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "3100ec01643c23ee",
+  "active": "fb4cbc5aed6b7746",
   "lastOpenFiles": [
     "未命名.base",
     "DataBase/DataBase.md",
