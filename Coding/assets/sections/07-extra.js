@@ -70,16 +70,113 @@ flowchart TB
             id: 'extra-mem',
             title: '3. 内存与性能',
             html: `
+                <p>程序运行时要不停申请和释放内存。<b>谁负责释放、释放得快不快</b>，直接决定了性能和稳定性。</p>
+
+                <h3>🧠 栈 Stack vs 堆 Heap</h3>
+                <p>这是程序运行时<b>两块不同的内存区域</b>，不要和"数据结构里的栈/堆"混淆。</p>
+                <table>
+                    <tr><th></th><th>栈 Stack</th><th>堆 Heap</th></tr>
+                    <tr><td>存什么</td><td>函数调用、局部变量、基本类型</td><td>动态分配的对象（new / malloc）</td></tr>
+                    <tr><td>分配方式</td><td>编译期确定，自动入栈/出栈</td><td>运行时申请，需要管理释放</td></tr>
+                    <tr><td>速度</td><td>✅ 极快（指针移动）</td><td>❌ 慢（要找空闲块）</td></tr>
+                    <tr><td>大小</td><td>小（几 MB）</td><td>大（受系统限制）</td></tr>
+                    <tr><td>生命周期</td><td>函数返回即销毁</td><td>需要 GC 或手动 free</td></tr>
+                </table>
+                <pre><code>def foo():
+    x = 10              # 栈：函数返回时自动消失
+    data = [1, 2, 3]    # 列表对象在堆，引用 data 在栈
+    return data         # 引用被外部接住 → 堆对象继续存活</code></pre>
+
+                <h3>🗑️ GC（Garbage Collection，垃圾回收）</h3>
+                <p><b>程序运行时自动回收"不再使用的堆内存"的机制</b>，让你不用手写 <code>free()</code>。</p>
+
+                <h4>为什么需要？</h4>
+                <p>只申请不释放 → 内存耗尽 → 崩溃（<b>内存泄漏</b>）。两种解决思路：</p>
+                <table>
+                    <tr><th>方式</th><th>代表语言</th><th>谁释放</th></tr>
+                    <tr><td>手动管理</td><td>C / C++</td><td>程序员（容易出 bug）</td></tr>
+                    <tr><td>自动 GC</td><td>Python / Java / Go / JS</td><td>运行时</td></tr>
+                    <tr><td>编译期检查</td><td>Rust</td><td>所有权 + 借用检查器</td></tr>
+                </table>
+
+                <h4>GC 怎么判断"垃圾"？三种核心算法</h4>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-title">① 引用计数 Reference Counting</div>
+                        <div class="card-desc">每个对象记录"几个变量指向我"，归零立刻回收。<br/>
+                        ❌ 缺点：循环引用回收不掉。<br/>
+                        代表：Python（主）、Swift、C++ shared_ptr</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">② 标记-清除 Mark &amp; Sweep</div>
+                        <div class="card-desc">从"根对象"出发遍历，可达 = 存活；剩下的清除。<br/>
+                        ✅ 能解决循环引用。<br/>
+                        代表：JVM、Go、V8</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">③ 分代回收 Generational GC</div>
+                        <div class="card-desc">观察：大多数对象很快就死。<br/>
+                        新对象放"新生代"频繁扫描；活得久的搬到"老年代"少扫描。<br/>
+                        代表：JVM、.NET、Python</div>
+                    </div>
+                </div>
+
+                <div class="mermaid">
+flowchart LR
+    Root[根对象<br/>全局变量/栈] --> A[对象A]
+    A --> B[对象B]
+    B --> C[对象C]
+    D[对象D] <--> E[对象E]
+    F[对象F] --> D
+
+    classDef alive fill:#d4edda,stroke:#28a745
+    classDef dead fill:#f8d7da,stroke:#dc3545
+    class A,B,C alive
+    class D,E,F dead
+                </div>
+                <p style="text-align:center;color:#666;font-size:13px;">
+                    🟢 根可达 = 存活　　🔴 根不可达（即使互相引用）= 垃圾
+                </p>
+
+                <h4>GC 的代价（性能关键）</h4>
+                <table>
+                    <tr><th>代价</th><th>说明</th></tr>
+                    <tr><td>CPU 开销</td><td>扫描、标记、整理都耗算力</td></tr>
+                    <tr><td><b>STW</b> Stop-The-World</td><td>部分 GC 会暂停整个程序几 ms~几百 ms</td></tr>
+                    <tr><td>延迟不可预测</td><td>实时系统（游戏、交易、音视频）很头疼</td></tr>
+                    <tr><td>内存占用偏高</td><td>对象死了不立刻释放，要等 GC 触发</td></tr>
+                </table>
+
+                <h4>各语言 GC 策略一览</h4>
+                <table>
+                    <tr><th>语言</th><th>策略</th></tr>
+                    <tr><td>Python</td><td>引用计数 + 分代标记清除（处理循环引用）</td></tr>
+                    <tr><td>Java</td><td>分代，可选 G1 / ZGC / Shenandoah（低延迟）</td></tr>
+                    <tr><td>Go</td><td>并发三色标记清除，STW 通常 &lt; 1ms</td></tr>
+                    <tr><td>JavaScript (V8)</td><td>分代 + 标记清除</td></tr>
+                    <tr><td>C / C++</td><td>❌ 无 GC，手动 / 智能指针</td></tr>
+                    <tr><td>Rust</td><td>❌ 无 GC，所有权机制在编译期保证安全</td></tr>
+                </table>
+
+                <div class="tip-box warning">
+                    <span class="tip-title"><i class="fa fa-exclamation-triangle"></i> 注意</span>
+                    <b>有 GC ≠ 不会内存泄漏</b>！只要对象还被引用着（例如塞进了全局缓存、事件监听器没解绑），GC 就以为它"还活着"，永远不回收。
+                </div>
+
+                <h3>⚡ 其他性能关键概念</h3>
                 <ul>
-                    <li><b>栈 vs 堆</b>：函数局部变量 vs 动态分配对象</li>
-                    <li><b>GC 垃圾回收</b>：标记-清除、复制、分代、引用计数</li>
-                    <li><b>内存泄漏 Memory Leak</b>：不再使用但无法回收</li>
-                    <li><b>引用计数 / 弱引用</b>：避免循环引用</li>
-                    <li><b>缓存局部性</b>：CPU L1/L2/L3 Cache 命中</li>
-                    <li><b>零拷贝 Zero-Copy</b>：减少数据复制（sendfile/mmap）</li>
-                    <li><b>大 O 复杂度</b>：O(1)/O(log n)/O(n)/O(n²)</li>
-                    <li><b>Profile / Benchmark</b>：测量优于猜测</li>
+                    <li><b>内存泄漏 Memory Leak</b>：对象不再被使用，但仍被引用，GC 无法回收</li>
+                    <li><b>弱引用 Weak Reference</b>：不增加引用计数，常用于缓存，打破循环引用</li>
+                    <li><b>缓存局部性 Cache Locality</b>：连续访问相邻内存，CPU L1/L2/L3 缓存命中率高 → 比 RAM 快百倍</li>
+                    <li><b>零拷贝 Zero-Copy</b>：数据从内核态直接发出，避免用户态-内核态来回复制（sendfile / mmap / splice）</li>
+                    <li><b>大 O 复杂度</b>：算法效率上界，O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(2ⁿ)</li>
+                    <li><b>Profile / Benchmark</b>：先测量再优化，<b>不要靠猜</b>（py-spy、pprof、perf、JMH）</li>
                 </ul>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-lightbulb"></i> Donald Knuth</span>
+                    "<b>Premature optimization is the root of all evil.</b>"——过早优化是万恶之源。先让程序正确，再用 profiler 找出真正的瓶颈。
+                </div>
             `
         },
         {
