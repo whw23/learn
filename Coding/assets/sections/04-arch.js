@@ -540,7 +540,7 @@ flowchart LR
         },
         {
             id: 'arch-microservice',
-            title: '6. SOA / 微服务 / Serverless',
+            title: '6. SOA / 微服务 / Serverless（云原生全家桶）',
             html: `
                 <h3>SOA（面向服务架构）</h3>
                 <p>把系统拆成多个粗粒度服务，通过 ESB（企业服务总线）通信。重协议、重治理。</p>
@@ -563,11 +563,323 @@ flowchart LR
                     <tr><td>独立部署、技术多样、易扩展</td><td>分布式复杂、网络开销、运维成本高</td></tr>
                 </table>
 
-                <h3>Serverless / FaaS</h3>
-                <p>把"函数"作为部署单元，按调用次数计费。AWS Lambda、阿里云函数计算。</p>
+                <div class="tip-box warn">
+                    <span class="tip-title"><i class="fa fa-exclamation"></i> 警告</span>
+                    <b>微服务不是免费午餐</b>。团队 &lt; 50 人，<b>不建议盲目上微服务</b>。<br/>
+                    建议路径：<b>单体 → 模块化单体 → 少量微服务 → 完全微服务</b>。
+                </div>
 
-                <h3>Service Mesh</h3>
-                <p>把服务治理（重试/熔断/链路追踪）下沉到 Sidecar（如 Istio + Envoy），业务代码零侵入。</p>
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌍 现代云原生全家桶：微服务 × Docker × K8s × K3s</h3>
+                <p>4 个东西在现代后端栈里<b>经常一起出现</b>，本质是层层递进解决问题：</p>
+
+                <div class="mermaid">
+flowchart TB
+    L1[L1 架构思想: 微服务<br/>把单体拆成多个独立服务]
+    L1 --> L2[L2 部署单元: Docker 容器<br/>把每个服务打包成镜像]
+    L2 --> L3[L3 编排平台: Kubernetes/K3s<br/>管理一堆容器的运行]
+    L3 --> L4[L4 服务治理: Istio/Linkerd<br/>服务间通信/监控/限流]
+                </div>
+
+                <p><b>演进逻辑</b>：每一层解决上一层带来的新问题。</p>
+
+                <h4>① Docker（容器化层）</h4>
+                <p>核心思想：把"应用 + 所有依赖 + 操作系统库"打包成一个镜像，<b>在哪都能跑</b>。</p>
+                <pre><code class="language-dockerfile">FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+
+                <h4>② Kubernetes（编排层）</h4>
+                <p>核心能力：自动调度、自动重启、自动扩缩、滚动升级、服务发现、负载均衡。</p>
+                <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata: { name: user-service }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: user-service } }
+  template:
+    metadata: { labels: { app: user-service } }
+    spec:
+      containers:
+        - name: user-service
+          image: myregistry/user-service:v1
+          ports: [{ containerPort: 8000 }]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 512Mi }</code></pre>
+
+                <h4>③ K3s（轻量 K8s）</h4>
+                <p>把 K8s 精简到 <b>&lt;100MB + 512MB 内存</b>，单二进制一行命令安装：</p>
+                <pre><code class="language-bash">curl -sfL https://get.k3s.io | sh -    # 5 秒装好</code></pre>
+                <ul>
+                    <li>沃尔玛在每家店部署 K3s</li>
+                    <li>特斯拉超级充电桩用 K3s</li>
+                    <li>工厂车间 IoT 边缘节点首选</li>
+                </ul>
+
+                <h4>📊 K8s vs K3s 对比</h4>
+                <table>
+                    <tr><th>维度</th><th>K8s</th><th>K3s</th></tr>
+                    <tr><td>大小</td><td>2GB+</td><td><b>&lt;100MB</b></td></tr>
+                    <tr><td>内存需求</td><td>8GB+</td><td><b>512MB</b></td></tr>
+                    <tr><td>API 兼容</td><td>100%</td><td><b>100%</b>（kubectl 直接用）</td></tr>
+                    <tr><td>典型场景</td><td>大规模生产 云上</td><td><b>边缘/IoT/开发/Homelab</b></td></tr>
+                    <tr><td>维护方</td><td>CNCF</td><td>Rancher / SUSE</td></tr>
+                </table>
+
+                <h4>🛠 K8s 核心对象速查</h4>
+                <table>
+                    <tr><th>对象</th><th>作用</th></tr>
+                    <tr><td><b>Pod</b></td><td>最小调度单元 = 1+ 容器</td></tr>
+                    <tr><td><b>Deployment</b></td><td>管理 Pod 副本数、滚动升级</td></tr>
+                    <tr><td><b>Service</b></td><td>给一组 Pod 稳定 IP/DNS = 内部负载均衡</td></tr>
+                    <tr><td><b>Ingress</b></td><td>对外暴露 = 集群级路由</td></tr>
+                    <tr><td><b>ConfigMap / Secret</b></td><td>配置注入</td></tr>
+                    <tr><td><b>PV / PVC</b></td><td>持久存储</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>⚡ Serverless / FaaS —— "只写函数 不管部署"</h3>
+                <p>把"函数"作为部署单元，按调用次数计费。<b>4 大类方案</b>：</p>
+
+                <div class="mermaid">
+flowchart TB
+    Want[我只想写函数]
+    Want --> A[① 云厂商 FaaS<br/>零运维]
+    Want --> B[② 边缘 FaaS<br/>全球分发 极速]
+    Want --> C[③ 自建 FaaS on K8s<br/>私有云]
+    Want --> D[④ 现代 PaaS<br/>git push 即部署]
+
+    A --> A1[AWS Lambda]
+    A --> A2[Azure Functions]
+    A --> A3[阿里云 FC / 腾讯云 SCF]
+
+    B --> B1[Cloudflare Workers ⭐ 冷启动 &lt; 5ms]
+    B --> B2[Vercel Edge Functions]
+    B --> B3[Deno Deploy]
+
+    C --> C1[Knative K8s 标准]
+    C --> C2[OpenFaaS ⭐ 最像 Lambda]
+    C --> C3[Fission / Nuclio]
+
+    D --> D1[Vercel / Netlify]
+    D --> D2[Railway / Render / Fly.io]
+                </div>
+
+                <h4>📊 FaaS 平台对比</h4>
+                <table>
+                    <tr><th>平台</th><th>免费额度</th><th>冷启动</th><th>特点</th></tr>
+                    <tr><td><b>AWS Lambda</b></td><td>100 万/月</td><td>100-500ms</td><td>鼻祖 生态全</td></tr>
+                    <tr><td><b>Cloudflare Workers</b> ⭐</td><td>10 万/天</td><td><b>&lt; 5ms</b></td><td>边缘 + AI 集成</td></tr>
+                    <tr><td>Vercel Functions</td><td>100GB 带宽</td><td>100ms+</td><td>前端友好</td></tr>
+                    <tr><td>阿里云 FC</td><td>100 万/月</td><td>中等</td><td>国内首选</td></tr>
+                    <tr><td>OpenFaaS（自建）</td><td>无</td><td>100~500ms</td><td>私有云最像 Lambda</td></tr>
+                    <tr><td>Knative（K8s）</td><td>无</td><td>100~500ms</td><td>缩容到 0</td></tr>
+                    <tr><td>Modal/Replicate</td><td>按 GPU 用量</td><td>—</td><td><b>GPU 函数 AI 推理</b></td></tr>
+                </table>
+
+                <h4>FaaS 不适合的场景</h4>
+                <ul>
+                    <li>❌ 长时间运行的任务（视频转码 1 小时）</li>
+                    <li>❌ 高吞吐的 WebSocket</li>
+                    <li>❌ 高频小请求（成本反而高）</li>
+                    <li>❌ 需要保持连接的（数据库连接池）</li>
+                </ul>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌊 边缘函数（Edge Function）</h3>
+                <p>"边缘"两层含义：<b>① 跑在靠近用户的地方</b>（CDN/工厂/IoT），<b>② 函数粒度部署</b>。</p>
+
+                <div class="mermaid">
+flowchart TB
+    K8sEdge[K8s 边缘方案]
+    K8sEdge --> L[轻量级 K8s]
+    K8sEdge --> Native[原生边缘扩展]
+    L --> L1[K3s ⭐ 最流行]
+    L --> L2[MicroK8s / k0s]
+    Native --> N1[KubeEdge ⭐ 云边协同<br/>支持 MQTT/Modbus 等 IoT 协议]
+    Native --> N2[OpenYurt 阿里]
+    Native --> N3[SuperEdge 腾讯]
+                </div>
+
+                <h4>边缘函数的现代方案对比</h4>
+                <table>
+                    <tr><th>方案</th><th>特点</th></tr>
+                    <tr><td><b>Cloudflare Workers</b> ⭐⭐⭐</td><td>300+ 节点 V8 isolate 冷启动 &lt; 5ms</td></tr>
+                    <tr><td>AWS Lambda@Edge</td><td>基于 CloudFront</td></tr>
+                    <tr><td>K3s + Knative 自建</td><td>完全可控 部署在自己边缘节点</td></tr>
+                    <tr><td>KubeEdge 工业级</td><td>断网可运行 支持设备协议</td></tr>
+                    <tr><td><b>WASM 容器</b>（未来方向）</td><td>启动毫秒级 跨平台 沙箱安全</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>💰 Cloudflare 生态：个人开发者的"免费乐园"</h3>
+                <p>Cloudflare 是当前对个人开发者最慷慨的云平台——<b>大部分项目可以永久免费</b>。</p>
+
+                <div class="mermaid">
+flowchart TB
+    CFStack[Cloudflare 全栈]
+    CFStack --> W[Workers 边缘函数<br/>10 万/天]
+    CFStack --> Pa[Pages 静态站<br/>无限带宽 ⭐]
+    CFStack --> R2[R2 对象存储<br/>10GB 无出网费]
+    CFStack --> D1c[D1 SQL 数据库<br/>5GB]
+    CFStack --> KVc[KV 缓存<br/>10万次读/天]
+    CFStack --> Vec[Vectorize 向量库<br/>3000万查询/月]
+    CFStack --> AI[Workers AI<br/>10000 次推理/天]
+    CFStack --> Gate[AI Gateway<br/>100 万次/月]
+    CFStack --> CDN[CDN 完全无限带宽 ⭐]
+                </div>
+
+                <h4>个人开发者必看的福利</h4>
+                <ul>
+                    <li>✅ <b>CDN 完全无限带宽</b>（AWS/Vercel 都做不到）</li>
+                    <li>✅ <b>超额自动 fail，不偷收费</b>（最安全）</li>
+                    <li>✅ <b>R2 无出网费</b>（取代 AWS S3 神器）</li>
+                    <li>✅ <b>自动 DDoS 防护 + SSL</b></li>
+                    <li>✅ <b>付费仅 $5/月 起含 1000 万次 Workers</b></li>
+                </ul>
+
+                <h4>🤖 Cloudflare AI Gateway（LLM 统一代理）</h4>
+                <pre><code class="language-python"># 把 OpenAI URL 换成 AI Gateway URL —— 立刻得到缓存/监控/限流
+from openai import OpenAI
+client = OpenAI(
+    base_url="https://gateway.ai.cloudflare.com/v1/{account}/{gateway}/openai",
+    api_key="sk-...",
+)
+# 调用代码完全不变，但拥有：
+# - 自动缓存（同 prompt 不重复扣费，可省 80%）
+# - 多模型回退（OpenAI 挂了自动切 Claude）
+# - 完整日志 + 成本追踪
+# - 支持 60+ LLM 供应商
+# - 完全免费（100 万次/月）</code></pre>
+
+                <h4>🔧 协议转换（OpenAI ↔ Claude/Gemini）</h4>
+                <table>
+                    <tr><th>方案</th><th>用法</th></tr>
+                    <tr><td><b>Anthropic 官方兼容</b></td><td>OpenAI SDK 直接调 Claude 改 base_url 即可</td></tr>
+                    <tr><td><b>OpenRouter</b></td><td>200+ 模型统一 OpenAI 格式（商用）</td></tr>
+                    <tr><td><b>LiteLLM</b> ⭐ 开源</td><td>100+ 模型统一接口 自部署完全免费</td></tr>
+                    <tr><td><b>Vercel AI SDK</b></td><td>统一各家 SDK 适合 Workers</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🏗 Cloudflare 内部架构哲学：Pingora vs Workers 分层</h3>
+                <p>有趣的问题：<b>Cloudflare AI Gateway 为什么不直接用 Pingora 写</b>？</p>
+
+                <div class="mermaid">
+flowchart TB
+    L1c[L1 网络层: TCP/HTTP]
+    L1c --> L2c[L2 代理层: Pingora 替代 Nginx<br/>每秒 4000 万请求]
+    L2c --> L3c[L3 计算层: Workers Runtime V8 Isolates]
+    L3c --> L4c[L4 应用层: AI Gateway 业务逻辑]
+    L4c --> L5c[L5 外部: OpenAI/Claude/Gemini]
+                </div>
+
+                <p><b>核心哲学</b>：</p>
+                <table>
+                    <tr><th>层</th><th>工具</th><th>原则</th></tr>
+                    <tr><td>基础设施</td><td><b>Pingora</b>（Rust）</td><td>极致性能 + 稳定 + 谨慎迭代</td></tr>
+                    <tr><td>平台</td><td><b>Workers</b>（V8）</td><td>通用计算 + 用户可扩展</td></tr>
+                    <tr><td>产品</td><td><b>AI Gateway</b>（TS on Workers）</td><td>业务复杂 + 快速迭代</td></tr>
+                </table>
+
+                <div class="tip-box">
+                    <b>类比</b>：就像 Linux Kernel 不会直接写 Web 服务一样，
+                    <b>Pingora 不会直接做 AI Gateway</b>——这是健康的分层设计：
+                    <b>"基础设施用稳定语言，业务逻辑用敏捷语言"</b>。
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🛡 Service Mesh —— 服务治理下沉</h3>
+                <p>把服务治理（重试/熔断/链路追踪/mTLS）下沉到 <b>Sidecar</b>，业务代码零侵入。</p>
+                <div class="mermaid">
+flowchart LR
+    subgraph Pod1[Pod 1]
+        App1[业务应用] <--> Side1[Sidecar Proxy<br/>Envoy/Linkerd]
+    end
+    subgraph Pod2[Pod 2]
+        Side2[Sidecar Proxy] <--> App2[业务应用]
+    end
+    Side1 <-->|mTLS/重试/熔断| Side2
+                </div>
+                <table>
+                    <tr><th>产品</th><th>特点</th></tr>
+                    <tr><td><b>Istio</b></td><td>功能最全 配置复杂</td></tr>
+                    <tr><td><b>Linkerd</b></td><td>轻量 性能好</td></tr>
+                    <tr><td><b>Cilium</b></td><td>eBPF 内核级 新势力 ⭐</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🛒 完整电商微服务架构（云原生范例）</h3>
+                <div class="mermaid">
+flowchart TB
+    Client2[客户端]
+    Client2 --> Ing[K8s Ingress]
+    Ing --> GW2[API Gateway APISIX/Kong]
+
+    GW2 --> US[用户服务 3 副本]
+    GW2 --> OS[订单服务 5 副本]
+    GW2 --> PS[商品服务 10 副本]
+    GW2 --> PayS[支付服务 3 副本]
+
+    US --> UDB[(MySQL)]
+    OS --> ODB[(MySQL)]
+    PS --> PDB[(MySQL)]
+    PS --> Redis2[(Redis 缓存)]
+    PS --> ES2[(Elasticsearch)]
+
+    OS -.事件.-> Kaf[(Kafka)]
+    Kaf -.订阅.-> Inv[库存服务]
+    Kaf -.订阅.-> Mail[通知服务]
+    Kaf -.订阅.-> Ana[分析服务]
+
+    All2[所有服务] -.指标.-> Prom[(Prometheus)]
+    All2 -.日志.-> Loki[(Loki)]
+    All2 -.链路.-> Jae[(Jaeger)]
+                </div>
+
+                <p><b>对应关系</b>：每个方框 = 一个微服务 = 一个 Docker 镜像 = 多个 K8s Pod。</p>
+
+                <h3>🎯 选型决策树</h3>
+                <div class="mermaid">
+flowchart TD
+    Q1{团队规模?}
+    Q1 -->|3-5 人| S1[单体应用 + Docker]
+    Q1 -->|10-30 人| S2[模块化单体]
+    Q1 -->|50+ 人| S3[微服务]
+
+    Q2{部署目标?}
+    Q2 -->|生产 + 云上| K8sP[K8s + 云服务 EKS/GKE]
+    Q2 -->|边缘 IoT| K3sE[K3s 或 KubeEdge]
+    Q2 -->|开发/Homelab| K3sH[K3s 或 minikube]
+    Q2 -->|个人项目想极便宜| CF[Cloudflare Workers]
+    Q2 -->|纯后台 API/事件触发| FaaS2[FaaS Lambda/Cloudflare]
+                </div>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 总结</span>
+                    <b>微服务 × Docker × K8s × K3s × FaaS</b> 是现代云原生全家桶：
+                    <ul>
+                        <li>① <b>微服务</b>：架构思想（怎么拆）</li>
+                        <li>② <b>Docker</b>：打包单元（怎么打包）</li>
+                        <li>③ <b>K8s/K3s</b>：编排平台（怎么调度）</li>
+                        <li>④ <b>Service Mesh</b>：服务治理（通信/监控）</li>
+                        <li>⑤ <b>FaaS</b>：函数粒度（只写函数）</li>
+                    </ul>
+                    <b>个人开发者最佳起点：Cloudflare Workers + Pages</b>（99% 永久免费）。<br/>
+                    <b>企业起步：单体 + Docker → 模块化 → K3s/K8s → 微服务</b>，不要一步登天。
+                </div>
             `
         },
         {
