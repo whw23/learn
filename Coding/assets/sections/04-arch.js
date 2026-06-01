@@ -1032,9 +1032,419 @@ flowchart TB
             `
         },
 
+        // ============================================================
+        // 插件式架构 Microkernel：覆盖 VS Code / Chrome / Webpack / Pytest / Superset / Nginx / Pingora / Envoy / MCP
+        // ============================================================
+        {
+            id: 'arch-microkernel',
+            title: '9. 插件式架构（Microkernel）· 全栈实战',
+            html: `
+                <p><b>插件式架构（Microkernel / Plug-in Architecture）</b>是现代软件最重要的扩展模式之一。
+                与 <a href="#paradigm-plugin">面向插件编程 POP</a>（编程范式）是<b>同一思想的架构层放大</b>。</p>
+
+                <h3>💡 核心思想</h3>
+                <div class="tip-box success">
+                    <b>"主程序保持精简，所有扩展能力都交给插件"</b>。<br/>
+                    主程序 = Microkernel（微内核）+ Plugin API；插件 = 实现这套 API 的独立模块。
+                </div>
+
+                <div class="mermaid">
+flowchart TB
+    Core[微内核 Core<br/>基础能力 + 插件管理]
+    Core -->|定义接口| API[Plugin API]
+    P1[插件 A] -->|实现 API| API
+    P2[插件 B] -->|实现 API| API
+    P3[插件 C] -->|实现 API| API
+    Pn[...]
+    Core -->|加载/激活/隔离| P1
+    Core -->|加载/激活/隔离| P2
+    Core -->|加载/激活/隔离| P3
+                </div>
+
+                <h3>🧩 6 大核心机制（任何插件系统都必须解决）</h3>
+                <div class="mermaid">
+flowchart TB
+    Plug[插件系统 6 大机制]
+    Plug --> M1[① 接口契约<br/>插件必须实现什么]
+    Plug --> M2[② 注册发现<br/>主程序怎么找到插件]
+    Plug --> M3[③ 生命周期<br/>load/activate/deactivate/unload]
+    Plug --> M4[④ 通信机制<br/>插件↔主程序 / 插件↔插件]
+    Plug --> M5[⑤ 隔离沙箱<br/>插件出错不影响主程序]
+    Plug --> M6[⑥ 扩展点 Extension Points<br/>插件能改/加什么]
+                </div>
+                <p>💡 <b>学懂任何插件系统，都问这 6 个问题就行</b>。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🎨 应用层插件（你能"看到"的）</h3>
+
+                <h4>① VS Code Extension（最经典）</h4>
+                <p>VS Code 把"扩展"作为一等公民。<b>每个扩展跑在独立子进程（Extension Host）</b>，一个崩了不影响主程序。</p>
+                <pre><code class="language-typescript">// extension.ts
+import * as vscode from 'vscode';
+export function activate(context: vscode.ExtensionContext) {
+    const cmd = vscode.commands.registerCommand('hello.sayHi', () => {
+        vscode.window.showInformationMessage('Hello!');
+    });
+    context.subscriptions.push(cmd);
+}
+export function deactivate() {}</code></pre>
+                <pre><code class="language-json">// package.json - manifest
+{
+    "name": "my-extension",
+    "main": "./out/extension.js",
+    "activationEvents": ["onCommand:hello.sayHi"],
+    "contributes": {
+        "commands": [{ "command": "hello.sayHi", "title": "Say Hi" }]
+    }
+}</code></pre>
+                <p><b>扩展点举例</b>：commands / menus / keybindings / languages / grammars / snippets / themes / views / debuggers / taskDefinitions...</p>
+
+                <h4>② Chrome 扩展</h4>
+                <p>Chrome 扩展有 4 种"角色"，<b>每种角色都在不同沙箱</b>：</p>
+                <div class="mermaid">
+flowchart TB
+    subgraph Ext[Chrome 扩展]
+        BG[Service Worker<br/>后台脚本]
+        Pop[Popup<br/>点击图标弹出]
+        CS[Content Script<br/>注入到网页]
+        Opt[Options Page<br/>设置页]
+    end
+    Tab[网页 Tab] <-.注入.-> CS
+    CS <-.message.-> BG
+    Pop <-.message.-> BG
+    BG <-->|Chrome API| Browser[Chrome 浏览器]
+                </div>
+                <pre><code class="language-json">// manifest.json (v3)
+{
+    "manifest_version": 3,
+    "name": "My Extension",
+    "permissions": ["activeTab", "storage"],
+    "action": { "default_popup": "popup.html" },
+    "content_scripts": [{ "matches": ["https://*/*"], "js": ["content.js"] }],
+    "background": { "service_worker": "background.js" }
+}</code></pre>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🔧 构建/开发工具插件</h3>
+                <table>
+                    <tr><th>工具</th><th>插件机制</th></tr>
+                    <tr><td>Webpack</td><td>Loader（转换文件）+ Plugin（钩子事件）</td></tr>
+                    <tr><td>Vite</td><td>Plugin（兼容 Rollup 风格）</td></tr>
+                    <tr><td>Rollup</td><td>Plugin（最早的 build hook 标准）</td></tr>
+                    <tr><td>Babel</td><td>Plugin（AST 转换）</td></tr>
+                    <tr><td>ESLint</td><td>Plugin + Rule</td></tr>
+                    <tr><td>Pytest</td><td><code>entry_points</code> 自动发现</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>📊 数据/可视化平台插件</h3>
+
+                <h4>Superset 插件</h4>
+                <pre><code class="language-typescript">// 自定义图表 Viz Plugin
+import { ChartPlugin } from '@superset-ui/core';
+export default class MyChartPlugin extends ChartPlugin {
+    constructor() {
+        super({
+            buildQuery, controlPanel, transformProps, Chart: MyChart,
+            metadata: { name: 'My Chart', category: 'Custom' },
+        });
+    }
+}</code></pre>
+                <pre><code class="language-python"># 自定义数据源
+from superset.db_engine_specs.base import BaseEngineSpec
+class MyCustomEngineSpec(BaseEngineSpec):
+    engine = "mydb"
+    engine_name = "My Custom Database"</code></pre>
+                <p>→ <code>pip install</code> 即装，主程序自动发现注册。</p>
+
+                <p>同类工具：<b>Grafana Plugin</b>、<b>Jupyter Extension</b>、<b>Notion Integration</b>、<b>Figma Plugin</b>、<b>Obsidian Plugin</b>。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌐 基础设施级插件：Nginx / OpenResty / Pingora / Envoy</h3>
+                <p>这是<b>性能要求最严苛</b>的插件场景——决定全球 30%+ 网站怎么工作。</p>
+
+                <h4>① Nginx Module（传统 C 模块）</h4>
+                <p>Nginx 处理请求有 <b>11 个 phase</b>，模块挂在任意阶段：</p>
+                <div class="mermaid">
+flowchart TB
+    Req[请求进入]
+    Req --> P1[POST_READ]
+    P1 --> P2[SERVER_REWRITE]
+    P2 --> P3[FIND_CONFIG]
+    P3 --> P4[REWRITE]
+    P4 --> P5[POST_REWRITE]
+    P5 --> P6[PREACCESS]
+    P6 --> P7[ACCESS 鉴权 ⭐]
+    P7 --> P8[POST_ACCESS]
+    P8 --> P9[PRECONTENT]
+    P9 --> P10[CONTENT 生成内容 ⭐]
+    P10 --> P11[LOG ⭐]
+                </div>
+
+                <pre><code class="language-bash"># 编译时静态加入
+./configure --add-module=/path/to/my-module
+# 或动态模块 1.9.11+
+./configure --add-dynamic-module=/path/to/my-module
+make modules</code></pre>
+                <pre><code class="language-nginx"># nginx.conf 加载动态模块
+load_module modules/ngx_http_my_module.so;</code></pre>
+
+                <h4>② OpenResty + Lua（实战首选 ⭐）</h4>
+                <p>把 Nginx 变成"高性能 Web 应用平台"，<b>修改即生效（reload）</b>。阿里、字节、Cloudflare 早期都用。</p>
+                <pre><code class="language-nginx">location /api {
+    content_by_lua_block {
+        local cjson = require "cjson"
+        local res = ngx.location.capture("/backend")
+        ngx.say(cjson.encode({status = "ok", data = res.body}))
+    }
+}
+
+location /protected {
+    access_by_lua_block {
+        local token = ngx.var.http_authorization
+        if not token then ngx.exit(401) end
+        local redis = require "resty.redis"
+        local red = redis:new()
+        red:connect("127.0.0.1", 6379)
+        if not red:get("token:" .. token) then ngx.exit(403) end
+    }
+    proxy_pass http://backend;
+}</code></pre>
+
+                <h4>③ Pingora（Cloudflare Rust 重写版 ⭐）</h4>
+                <p>Cloudflare 用 Rust 重写 Nginx，处理 <b>每秒 4000 万</b> 请求。插件 = <b>实现 trait</b>。</p>
+                <pre><code class="language-rust">use pingora::prelude::*;
+use async_trait::async_trait;
+
+pub struct MyProxy;
+
+#[async_trait]
+impl ProxyHttp for MyProxy {
+    type CTX = ();
+    fn new_ctx(&amp;self) -&gt; () { () }
+
+    // ⭐ 选上游
+    async fn upstream_peer(&amp;self, _session: &amp;mut Session, _ctx: &amp;mut ())
+        -&gt; Result&lt;Box&lt;HttpPeer&gt;&gt; {
+        let addr = ("backend.example.com", 443);
+        Ok(Box::new(HttpPeer::new(addr, true, "backend.example.com".into())))
+    }
+
+    // ⭐ 请求过滤：鉴权
+    async fn request_filter(&amp;self, session: &amp;mut Session, _ctx: &amp;mut ())
+        -&gt; Result&lt;bool&gt; {
+        if session.req_header().headers.get("authorization").is_none() {
+            session.respond_error(401).await;
+            return Ok(true);
+        }
+        Ok(false)
+    }
+
+    // ⭐ 改响应
+    async fn response_filter(&amp;self, _s: &amp;mut Session,
+        response: &amp;mut ResponseHeader, _ctx: &amp;mut ()) -&gt; Result&lt;()&gt; {
+        response.insert_header("x-server", "Pingora")?;
+        Ok(())
+    }
+}</code></pre>
+                <p>每个 <b>trait method = 一个 Phase 钩子</b>，你 override 哪个就是你的"插件"。</p>
+
+                <h4>④ Envoy WASM（未来方向 ⭐）</h4>
+                <p>Envoy 用 <b>WASM 沙箱</b> 加载插件——<b>跨语言 + 热加载 + 沙箱安全</b>。</p>
+                <pre><code class="language-rust">use proxy_wasm::traits::*;
+use proxy_wasm::types::*;
+
+struct MyFilter;
+impl HttpContext for MyFilter {
+    fn on_http_request_headers(&amp;mut self, _: usize, _: bool) -&gt; Action {
+        self.set_http_request_header("x-my-plugin", Some("hello"));
+        Action::Continue
+    }
+}</code></pre>
+
+                <h4>📊 4 大代理插件机制对比</h4>
+                <table>
+                    <tr><th>维度</th><th>Nginx C 模块</th><th>OpenResty Lua</th><th>Pingora Trait</th><th>Envoy WASM</th></tr>
+                    <tr><td>语言</td><td>C</td><td>Lua</td><td>Rust</td><td>Rust/Go/JS</td></tr>
+                    <tr><td>开发难度</td><td>⭐⭐⭐⭐⭐ 难</td><td>⭐⭐ 易</td><td>⭐⭐⭐ 中</td><td>⭐⭐⭐ 中</td></tr>
+                    <tr><td>性能</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+                    <tr><td>内存安全</td><td>❌ 手动</td><td>✅ Lua</td><td>✅✅ Rust</td><td>✅✅ WASM</td></tr>
+                    <tr><td>热更新</td><td>❌ 重启</td><td>✅ reload</td><td>⚠️ 需设计</td><td>✅ 运行时</td></tr>
+                    <tr><td>代表用户</td><td>各大网站</td><td>OpenResty/APISIX</td><td><b>Cloudflare 已全平台迁移</b></td><td>Envoy/Istio</td></tr>
+                </table>
+
+                <h4>🚪 API 网关产品（基于 Nginx + Lua）</h4>
+                <table>
+                    <tr><th>产品</th><th>说明</th></tr>
+                    <tr><td><b>Kong</b></td><td>基于 OpenResty 的老牌 API 网关</td></tr>
+                    <tr><td><b>Apache APISIX</b> ⭐</td><td>新一代云原生网关，内置 80+ 插件（auth/限流/WAF/AI 代理）</td></tr>
+                    <tr><td><b>Tengine</b></td><td>阿里开源的 Nginx 分支</td></tr>
+                </table>
+                <pre><code class="language-yaml"># APISIX 配置：给路由加插件就这么简单
+routes:
+  - uri: /api/users
+    plugins:
+      jwt-auth: {}
+      limit-req: { rate: 100, burst: 50 }
+      prometheus: {}
+    upstream:
+      nodes: { "127.0.0.1:8080": 1 }</code></pre>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🤖 AI 时代的插件：MCP / Function Call / Agent Skill</h3>
+                <p>详见 <a href="#ai-era">🤖 AI 时代的编程</a> 章节。简言之：</p>
+                <table>
+                    <tr><th>形态</th><th>插件是什么</th><th>执行者</th></tr>
+                    <tr><td><b>Function Call</b></td><td>JSON Schema 描述的函数</td><td>程序 + LLM 决策</td></tr>
+                    <tr><td><b>MCP</b></td><td>独立进程的工具集</td><td>独立 Server</td></tr>
+                    <tr><td><b>Agent Skill</b></td><td>Markdown 文档</td><td>LLM 阅读 + 推理</td></tr>
+                </table>
+                <p>→ <b>MCP = LLM 时代的 "VS Code Extension 系统"</b>。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌳 插件系统全景图</h3>
+                <div class="mermaid">
+flowchart TB
+    All[插件式架构家族]
+
+    All --> App[应用级]
+    All --> Build[构建工具]
+    All --> Data[数据/可视化]
+    All --> Infra[基础设施级]
+    All --> AI[AI 时代]
+
+    App --> A1[VS Code]
+    App --> A2[Chrome/Firefox]
+    App --> A3[Figma/Notion]
+    App --> A4[Obsidian]
+
+    Build --> B1[Webpack/Vite]
+    Build --> B2[Babel/ESLint]
+    Build --> B3[Pytest/Jest]
+
+    Data --> D1[Superset]
+    Data --> D2[Grafana]
+    Data --> D3[Jupyter]
+
+    Infra --> I1[Nginx Module]
+    Infra --> I2[OpenResty Lua ⭐]
+    Infra --> I3[Pingora Trait]
+    Infra --> I4[Envoy WASM]
+    Infra --> I5[APISIX/Kong]
+
+    AI --> AI1[MCP]
+    AI --> AI2[Function Call]
+    AI --> AI3[Agent Skill]
+                </div>
+
+                <h3>📊 4 大类插件对比</h3>
+                <table>
+                    <tr><th>类型</th><th>用户感知</th><th>性能要求</th><th>典型语言</th></tr>
+                    <tr><td>应用插件</td><td>用户能选装</td><td>中</td><td>TS/JS</td></tr>
+                    <tr><td>构建插件</td><td>开发者用</td><td>高</td><td>TS/JS</td></tr>
+                    <tr><td>基础设施插件</td><td>透明</td><td><b>极高</b></td><td>C/Lua/Rust</td></tr>
+                    <tr><td>AI 插件</td><td>LLM 调用</td><td>中</td><td>任意</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🧰 自己设计插件系统（Python 完整示例）</h3>
+                <pre><code class="language-python"># 1. 接口契约
+from abc import ABC, abstractmethod
+
+class Plugin(ABC):
+    name: str = ""
+    version: str = "1.0"
+    @abstractmethod
+    def activate(self, context): pass
+    @abstractmethod
+    def deactivate(self): pass
+
+# 2. 插件管理器（用 setuptools entry_points 发现）
+import pkg_resources
+
+class PluginManager:
+    def __init__(self):
+        self.plugins = {}
+    def discover(self):
+        for ep in pkg_resources.iter_entry_points('myapp.plugins'):
+            cls = ep.load()
+            self.plugins[cls.name] = cls()
+    def activate_all(self, context):
+        for p in self.plugins.values():
+            p.activate(context)
+
+# 3. 一个插件
+class HelloPlugin(Plugin):
+    name = "hello"
+    def activate(self, context):
+        context.register_command('hello', lambda: print("Hello!"))
+    def deactivate(self): pass
+
+# 4. 插件包的 setup.py 声明
+setup(
+    name='myapp-hello-plugin',
+    entry_points={
+        'myapp.plugins': ['hello = hello_plugin:HelloPlugin'],
+    },
+)
+# 用户: pip install myapp-hello-plugin → 主程序自动发现</code></pre>
+
+                <h3>⚖️ 插件系统设计的关键权衡</h3>
+                <table>
+                    <tr><th>设计</th><th>优</th><th>劣</th><th>代表</th></tr>
+                    <tr><td>同进程加载</td><td>快、简单</td><td>一崩全崩</td><td>Pytest</td></tr>
+                    <tr><td>子进程隔离</td><td>安全、稳定</td><td>通信开销</td><td>VS Code</td></tr>
+                    <tr><td>WASM 沙箱</td><td>跨语言、安全</td><td>学习曲线</td><td>Envoy / Figma</td></tr>
+                    <tr><td>独立服务</td><td>极致解耦</td><td>网络开销</td><td>MCP / 微服务</td></tr>
+                </table>
+
+                <h3>🎯 给你的实战建议</h3>
+                <div class="mermaid">
+flowchart TD
+    Q{你的目标?}
+    Q -->|学 Nginx 写小功能| OR[OpenResty Lua<br/>1 小时上手]
+    Q -->|生产环境网关| APISIX[APISIX 或 Kong]
+    Q -->|做云原生网关| Envoy3[Envoy + WASM]
+    Q -->|体验 Rust 现代化| Ping[Pingora]
+    Q -->|公司用 Nginx 加功能| OR2[OpenResty Lua<br/>避免改 C 模块]
+    Q -->|写应用扩展| VSExt[VS Code Extension]
+    Q -->|做 AI 工具| MCP3[MCP Server]
+                </div>
+
+                <h3>📚 最佳学习资源</h3>
+                <table>
+                    <tr><th>框架</th><th>入门资源</th></tr>
+                    <tr><td>VS Code</td><td><a href="https://code.visualstudio.com/api/get-started/your-first-extension">Your First Extension</a></td></tr>
+                    <tr><td>Chrome</td><td><a href="https://developer.chrome.com/docs/extensions/get-started">Chrome Extensions Hello World</a></td></tr>
+                    <tr><td>Pytest</td><td><a href="https://docs.pytest.org/en/stable/how-to/writing_plugins.html">Writing plugins</a></td></tr>
+                    <tr><td>Webpack</td><td><a href="https://webpack.js.org/contribute/writing-a-plugin/">Writing a Plugin</a></td></tr>
+                    <tr><td>OpenResty</td><td><a href="https://openresty.org/en/getting-started.html">Getting Started</a></td></tr>
+                    <tr><td>APISIX</td><td><a href="https://apisix.apache.org/docs/apisix/getting-started/">Quickstart</a></td></tr>
+                    <tr><td>Pingora</td><td><a href="https://github.com/cloudflare/pingora">GitHub Repo</a></td></tr>
+                    <tr><td>MCP</td><td><a href="https://modelcontextprotocol.io/quickstart">MCP Quickstart</a></td></tr>
+                </table>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话总结</span>
+                    <b>插件式架构 = "主程序保持精简 + 所有扩展通过插件"</b>。<br/>
+                    <b>6 大机制</b>：接口/注册/生命周期/通信/隔离/扩展点。<br/>
+                    <b>覆盖范围</b>：应用（VS Code/Chrome）→ 构建（Webpack）→ 数据（Superset）→
+                    基础设施（Nginx/OpenResty/Pingora/Envoy）→ AI（MCP/Skill）。<br/>
+                    <b>理解了一种插件系统就理解了所有</b>——这是工程师最值钱的"元能力"。
+                </div>
+            `
+        },
+
         {
             id: 'arch-others',
-            title: '9. 其他架构模式',
+            title: '10. 其他架构模式',
             html: `
                 <table>
                     <tr><th>模式</th><th>说明</th><th>典型应用</th></tr>
@@ -1042,11 +1452,10 @@ flowchart TB
                     <tr><td>客户端-服务器 C/S</td><td>请求-响应模型</td><td>所有 Web 应用</td></tr>
                     <tr><td>P2P</td><td>对等节点直连</td><td>BitTorrent、区块链</td></tr>
                     <tr><td>主从架构 Master-Slave</td><td>主写从读</td><td>MySQL 主从、Redis</td></tr>
-                    <tr><td>插件式 Microkernel</td><td>核心 + 插件</td><td>VS Code、Eclipse</td></tr>
                     <tr><td>BFF</td><td>Backend For Frontend，按端定制后端</td><td>移动 App + Web</td></tr>
                     <tr><td>Lambda / Kappa</td><td>大数据批+流 / 纯流</td><td>实时数仓</td></tr>
                 </table>
-                <p>（"黑板架构"已独立成上一小节，请见 <a href="#arch-blackboard">8. 黑板架构 + AI 时代复活</a>。）</p>
+                <p>已独立成节的模式：<a href="#arch-blackboard">8. 黑板架构</a>、<a href="#arch-microkernel">9. 插件式架构</a>。</p>
             `
         }
     ]
