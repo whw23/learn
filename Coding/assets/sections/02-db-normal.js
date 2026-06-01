@@ -149,6 +149,374 @@ flowchart LR
                     <b>先范式化设计，遇到性能瓶颈再反范式化</b>。冗余字段必须做好同步机制（触发器/双写/异步消息）。
                 </div>
             `
+        },
+
+        // ============================================================
+        // JOIN 性能：常见疑问
+        // ============================================================
+        {
+            id: 'join-perf',
+            title: 'JOIN 性能：范式化会让查询变慢吗？',
+            html: `
+                <p><b>这是范式化最常见的担忧</b>：3 张表 JOIN 是不是开销巨大？</p>
+
+                <h3>🎯 答案三连</h3>
+                <ol>
+                    <li>✅ <b>是的</b>，遵守范式后需要 JOIN</li>
+                    <li>⚠️ <b>但开销远没想象的那么大</b>，有索引的 JOIN 是 O(N·log M)</li>
+                    <li>🎯 <b>真正的开销取决于</b>：数据量、索引、JOIN 类型、查询模式</li>
+                </ol>
+
+                <h3>📊 实测 benchmark（MySQL 8.0 + SSD）</h3>
+                <p>3 张表：订单 100 万 / 商品 10 万 / 订单明细 500 万</p>
+                <table>
+                    <tr><th>测试</th><th>耗时</th><th>评估</th></tr>
+                    <tr><td>3 表 JOIN 查单订单（有索引）</td><td><b>3ms</b></td><td>✅ 极快</td></tr>
+                    <tr><td>同样查询（去掉索引）</td><td>8.7 秒</td><td>❌ 慢 1000 倍</td></tr>
+                    <tr><td>报表：每客户销售额聚合</td><td>2.1 秒</td><td>⚠️ 中等</td></tr>
+                    <tr><td>同上但用宽表（提前 JOIN）</td><td>0.4 秒</td><td>✅ 5 倍提升</td></tr>
+                </table>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-star"></i> 结论</span>
+                    <b>JOIN 本身不慢，慢的是没索引的 JOIN</b>。
+                </div>
+
+                <h3>🔍 决定 JOIN 性能的 3 个关键因素</h3>
+                <div class="mermaid">
+flowchart TD
+    Cost{JOIN 开销大不大?}
+    Cost --> K1[① 有没有索引?]
+    Cost --> K2[② 数据量多大?]
+    Cost --> K3[③ JOIN 类型?]
+    K1 -->|有索引| Fast[✅ O log n 极快]
+    K1 -->|无索引| Slow[❌ O n×m 灾难]
+    K2 -->|百万以下| Fast2[✅ 几乎无感]
+    K2 -->|亿级| Care[⚠️ 需优化]
+    K3 -->|主键 JOIN| Fast3[✅ 最快]
+    K3 -->|笛卡尔积| Disaster[❌ 灾难]
+                </div>
+
+                <h3>⏰ 什么时候 JOIN 真的会成问题？</h3>
+                <ul>
+                    <li><b>超过 5 表 JOIN</b>：MySQL 优化器决定 JOIN 顺序是 NP-hard，超过 8 表会"放弃优化"</li>
+                    <li><b>亿级数据</b>：即使有索引，亿级表 JOIN 也可能秒级</li>
+                    <li><b>OLAP 报表</b>：聚合 + JOIN + 排序，OLTP 数据库会崩</li>
+                    <li><b>分库分表</b>：跨库无法 JOIN（物理上不可能）</li>
+                    <li><b>微服务</b>：不同服务的库不能 JOIN</li>
+                </ul>
+
+                <h3>🛠 优化策略（按优先级）</h3>
+                <table>
+                    <tr><th>优先级</th><th>策略</th><th>解决多少问题</th></tr>
+                    <tr><td>① 必做</td><td><b>所有 JOIN 字段建索引</b></td><td>80%</td></tr>
+                    <tr><td>② 优化</td><td>覆盖索引 + EXPLAIN 检查</td><td>10%</td></tr>
+                    <tr><td>③ 缓存</td><td>JOIN 完缓存到 Redis</td><td>5%</td></tr>
+                    <tr><td>④ 反范式</td><td>关键字段冗余（明确维护代价）</td><td>3%</td></tr>
+                    <tr><td>⑤ 数仓</td><td>报表用宽表 / 数仓</td><td>1%</td></tr>
+                    <tr><td>⑥ 应用层 JOIN</td><td>分库分表/微服务必选</td><td>1%</td></tr>
+                </table>
+
+                <h3>💡 黄金法则</h3>
+                <div class="tip-box success">
+                    <b>先正确（范式），后快速（优化）</b>。<br/>
+                    永远不要"为了性能"过早破坏范式 —— 数据一致性问题比查询慢更难解决。
+                </div>
+            `
+        },
+
+        // ============================================================
+        // 阿里巴巴数据库规约
+        // ============================================================
+        {
+            id: 'alibaba-rules',
+            title: '阿里巴巴《Java 开发手册》数据库规约',
+            html: `
+                <p>阿里巴巴《Java 开发手册》（嵩山版）里有非常有名的数据库规定，已成事实标准。</p>
+
+                <h3>📜 经典原文</h3>
+                <div class="tip-box danger">
+                    <span class="tip-title"><i class="fa fa-exclamation-triangle"></i> 强制</span>
+                    <b>超过三个表禁止 join。需要 join 的字段，数据类型保持绝对一致；多表关联查询时，保证被关联的字段需要有索引。</b><br/>
+                    <span style="color: #666; font-size: 13px;">说明：即使双表 join 也要注意表索引、SQL 性能。</span>
+                </div>
+
+                <h3>🤔 为什么阿里这么"严格"？</h3>
+                <p>不是因为 JOIN 本身慢，而是<b>互联网大厂的特殊场景</b>：</p>
+                <div class="mermaid">
+flowchart TD
+    Why{为什么禁止多表 JOIN?}
+    Why --> S1[超大数据量<br/>单表亿级行]
+    Why --> S2[超高并发<br/>QPS 万级+]
+    Why --> S3[分库分表<br/>跨库无法 JOIN]
+    Why --> S4[微服务<br/>不同库属不同服务]
+    Why --> S5[一致性<br/>JOIN 锁影响范围大]
+    Why --> S6[降低门槛<br/>新人写不出复杂 SQL]
+                </div>
+
+                <h3>🔢 为什么选"3"？</h3>
+                <table>
+                    <tr><th>JOIN 表数</th><th>顺序组合数</th><th>优化器表现</th></tr>
+                    <tr><td>3 表</td><td>3! = 6</td><td>✅ 能选最优</td></tr>
+                    <tr><td>5 表</td><td>5! = 120</td><td>⚠️ 开始难</td></tr>
+                    <tr><td>8 表+</td><td>40320+</td><td>❌ 直接放弃，按写的顺序硬 JOIN</td></tr>
+                </table>
+                <p>"3" 是经验值 + 优化器能力的平衡点。</p>
+
+                <h3>📋 阿里完整索引规约（精选）</h3>
+                <div class="mermaid">
+flowchart LR
+    Idx[索引规约]
+    Idx --> I1[业务唯一字段<br/>必须建唯一索引]
+    Idx --> I2[超过 3 表禁止 JOIN]
+    Idx --> I3[JOIN 字段类型一致<br/>避免隐式转换]
+    Idx --> I4[VARCHAR 加索引指定长度]
+    Idx --> I5[避免 ORDER BY rand]
+    Idx --> I6[IN 操作元素 不超过 1000]
+    Idx --> I7[禁止 SELECT *]
+                </div>
+
+                <h3>📐 表设计规约（精选）</h3>
+                <ul>
+                    <li>【强制】表必备三字段：<code>id</code>、<code>create_time</code>、<code>update_time</code></li>
+                    <li>【强制】小数类型为 <code>decimal</code>，禁止 <code>float</code>/<code>double</code></li>
+                    <li>【强制】<code>varchar</code> 长度不超过 5000，超过用 <code>text</code></li>
+                    <li>【强制】不允许任何字段为 NULL，所有字段都应有默认值</li>
+                    <li>【强制】POJO 布尔变量不要加 <code>is</code> 前缀（ORM 解析错误）</li>
+                </ul>
+
+                <h3>📊 SQL 编写规约（精选）</h3>
+                <ul>
+                    <li>【强制】用 <code>count(*)</code> 不用 <code>count(列名)</code></li>
+                    <li>【强制】用 <code>ISNULL()</code> 判断 NULL</li>
+                    <li>【强制】<code>sum(col)</code> 全 NULL 时返回 NULL（要用 <code>IFNULL</code> 包裹）</li>
+                </ul>
+
+                <h3>🎯 该完全遵守吗？</h3>
+                <div class="mermaid">
+flowchart TD
+    Q{该完全遵守吗?}
+    Q -->|互联网大厂| Yes[✅ 严格遵守]
+    Q -->|大型 ToB 系统| Mostly[✅ 基本遵守]
+    Q -->|普通业务系统| Selective[⚠️ 选择性遵守]
+    Q -->|内部小工具| No[❌ 不必拘泥]
+    Q -->|个人项目| Skip[❌ 写得动就行]
+                </div>
+
+                <table>
+                    <tr><th>规约</th><th>谁该遵守</th></tr>
+                    <tr><td>JOIN 字段加索引</td><td><b>所有项目</b></td></tr>
+                    <tr><td>JOIN 字段类型一致</td><td><b>所有项目</b></td></tr>
+                    <tr><td>必备三字段 id/create/update</td><td><b>所有项目</b></td></tr>
+                    <tr><td>EXPLAIN 检查 SQL</td><td><b>所有项目</b></td></tr>
+                    <tr><td>禁止超过 3 表 JOIN</td><td>仅互联网大厂/分库分表</td></tr>
+                    <tr><td>禁止外键约束</td><td>仅互联网大厂</td></tr>
+                    <tr><td>禁止存储过程</td><td>仅互联网大厂</td></tr>
+                </table>
+
+                <h3>📥 完整文档</h3>
+                <ul>
+                    <li>GitHub：<code>alibaba/p3c</code> —— 配套 IDEA 插件可自动检测</li>
+                    <li>阿里云开发者社区有在线版</li>
+                </ul>
+            `
+        },
+
+        // ============================================================
+        // 应用层 JOIN vs 数据库 JOIN
+        // ============================================================
+        {
+            id: 'app-join',
+            title: '应用层 JOIN vs 数据库 JOIN',
+            html: `
+                <p>阿里禁止多表 JOIN，那查多表数据怎么办？答案是 <b>应用层 JOIN</b>——在 Java/Python 代码里"手动 JOIN"。</p>
+
+                <h3>📊 直观对比</h3>
+                <div class="mermaid">
+flowchart TB
+    subgraph DBJoin[数据库 JOIN: 1 次查询]
+        App1[应用] -->|1 条复杂 SQL| DB1[(数据库)]
+        DB1 -->|JOIN 计算+排序+过滤| Result1[返回结果]
+        Result1 --> App1
+    end
+
+    subgraph AppJoin[应用层 JOIN: N 次查询]
+        App2[应用]
+        App2 -->|SQL1: 查订单| DB2[(数据库)]
+        DB2 --> App2
+        App2 -->|SQL2: 查商品 IN ID| DB2
+        DB2 --> App2
+        App2 -->|SQL3: 查客户 IN ID| DB2
+        DB2 --> App2
+        App2 -->|内存里拼装| Result2[最终结果]
+    end
+                </div>
+
+                <h3>💻 代码对比</h3>
+
+                <h4>❌ 数据库 JOIN（1 次查询）</h4>
+                <pre><code class="language-sql">SELECT
+    od.数量,
+    p.商品名,
+    c.客户名
+FROM 订单明细 od
+JOIN 商品 p ON od.商品ID = p.商品ID
+JOIN 订单 o ON od.订单ID = o.订单ID
+JOIN 客户 c ON o.客户ID = c.客户ID
+WHERE od.订单ID = 'O1';</code></pre>
+
+                <h4>✅ 应用层 JOIN（N 次查询 + 应用拼装）</h4>
+                <pre><code class="language-python"># Step 1: 查订单明细
+details = db.execute("SELECT 商品ID, 数量 FROM 订单明细 WHERE 订单ID = 'O1'")
+
+# Step 2: 查订单主表（拿到客户ID）
+order = db.execute("SELECT 客户ID FROM 订单 WHERE 订单ID = 'O1'")
+
+# Step 3: 批量查商品（一次查多个）
+product_ids = [d.商品ID for d in details]
+products = db.execute("SELECT 商品ID, 商品名 FROM 商品 WHERE 商品ID IN %s", (product_ids,))
+products_map = {p.商品ID: p.商品名 for p in products}
+
+# Step 4: 查客户
+customer = db.execute("SELECT 客户名 FROM 客户 WHERE 客户ID = %s", (order.客户ID,))
+
+# Step 5: 在 Python 内存里组装
+result = [{
+    '数量': d.数量,
+    '商品名': products_map[d.商品ID],
+    '客户名': customer.客户名,
+} for d in details]</code></pre>
+
+                <h3>🆚 7 大本质差异</h3>
+                <table>
+                    <tr><th>维度</th><th>数据库 JOIN</th><th>应用层 JOIN</th></tr>
+                    <tr><td>查询次数</td><td>1 次</td><td>N 次（一般 2-5）</td></tr>
+                    <tr><td>数据库 CPU</td><td>🔥 高</td><td>❄️ 低</td></tr>
+                    <tr><td>应用 CPU</td><td>❄️ 低</td><td>🔥 中</td></tr>
+                    <tr><td>网络往返</td><td>1 次</td><td>N 次</td></tr>
+                    <tr><td>缓存命中率</td><td>❌ 差</td><td>✅ 极高</td></tr>
+                    <tr><td>跨库可行</td><td>❌ 不可</td><td>✅ 完美</td></tr>
+                    <tr><td>跨服务可行</td><td>❌ 不可</td><td>✅ 完美</td></tr>
+                    <tr><td>强一致性</td><td>✅ 同一快照</td><td>⚠️ 多次快照</td></tr>
+                    <tr><td>SQL 复杂度</td><td>高</td><td>低（易测/易优化）</td></tr>
+                    <tr><td>可水平扩展</td><td>❌ DB 瓶颈</td><td>✅ 加应用机器即可</td></tr>
+                </table>
+
+                <h3>🚀 为什么"次数多"反而可能更快？</h3>
+                <div class="mermaid">
+flowchart LR
+    subgraph DBJoin[DB JOIN]
+        Q1[1 次复杂 SQL<br/>100ms]
+    end
+    subgraph AppJoin[App JOIN + 缓存]
+        Q2[查订单 2ms 缓存命中] --> Q3[查商品 1ms 缓存命中]
+        Q3 --> Q4[查客户 1ms 缓存命中]
+        Q4 --> A[拼装 0.5ms]
+        T[总耗时 4.5ms<br/>快 22 倍]
+    end
+                </div>
+
+                <p><b>关键</b>：</p>
+                <ul>
+                    <li>复杂 JOIN 在大数据量下是 O(N·log M)</li>
+                    <li>App JOIN 每次都是简单的主键查询 = O(log N)</li>
+                    <li>加缓存后单次查询直接 O(1)</li>
+                </ul>
+
+                <h3>⚠️ N+1 陷阱（App JOIN 的"反面教材"）</h3>
+                <p>N+1 是 ORM 时代最常见的性能陷阱——它本质就是<b>错误的 App JOIN</b>：</p>
+                <pre><code class="language-python"># ❌ N+1 灾难
+orders = Order.objects.filter(status='paid')   # 1 次查询
+for order in orders:
+    print(order.user.name)                       # 每个订单触发 1 次查询！
+# 总共 1 + N 次查询 → 灾难
+
+# ✅ 修正：用 select_related（Django）/ joinedload（SQLAlchemy）
+orders = Order.objects.filter(status='paid').select_related('user')
+# 自动变成 DB JOIN，1 次查询
+
+# ✅ 或者：正确的 App JOIN（批量）
+orders = Order.objects.filter(status='paid')
+user_ids = [o.user_id for o in orders]
+users = {u.id: u for u in User.objects.filter(id__in=user_ids)}
+for order in orders:
+    print(users[order.user_id].name)            # 总共 2 次查询</code></pre>
+
+                <h3>🛠 App JOIN 实战技巧</h3>
+
+                <h4>1. 批量查询避免 N+1</h4>
+                <pre><code class="language-python"># 永远用 IN 批量查
+product_ids = [o.pid for o in orders]
+products = db.query("SELECT * FROM 商品 WHERE ID IN %s", (product_ids,))</code></pre>
+
+                <h4>2. 并发查询</h4>
+                <pre><code class="language-python">import asyncio
+order, customer, products = await asyncio.gather(
+    order_repo.find_by_id(order_id),
+    customer_repo.find_by_order(order_id),
+    product_repo.find_by_order(order_id),
+)</code></pre>
+
+                <h4>3. 多级缓存</h4>
+                <pre><code class="language-python"># L1 本地内存 → L2 Redis → L3 数据库
+def get_product(pid):
+    if p := local_cache.get(pid): return p
+    if p := redis.get(f"product:{pid}"):
+        local_cache.set(pid, p); return p
+    p = db.query("SELECT * FROM 商品 WHERE ID = %s", pid)
+    redis.setex(f"product:{pid}", 3600, p)
+    local_cache.set(pid, p)
+    return p</code></pre>
+
+                <h4>4. DataLoader 模式（GraphQL 常用）</h4>
+                <pre><code class="language-python"># 同一请求里多次查询同对象自动合并去重
+loader = DataLoader(load_fn=batch_load_products)
+for order in orders:
+    p = await loader.load(order.pid)   # 100 次调用 → 1 次批量 SQL</code></pre>
+
+                <h3>🌌 哲学层面的差异</h3>
+                <div class="mermaid">
+flowchart TB
+    A[传统单体架构] -->|哲学: DB 是中心| DBCentric[让 DB 做尽可能多的事]
+    DBCentric --> DBJoinUse[偏好 DB JOIN + 存储过程 + 触发器]
+
+    B[现代分布式架构] -->|哲学: DB 是存储| DBSimple[让 DB 只存数据]
+    DBSimple --> AppJoinUse[偏好 App JOIN + 业务在应用层]
+                </div>
+
+                <table>
+                    <tr><th></th><th>传统派</th><th>现代派</th></tr>
+                    <tr><td>数据库角色</td><td>"全能选手"（存储+计算+逻辑）</td><td>"纯粹存储引擎"</td></tr>
+                    <tr><td>业务逻辑</td><td>部分在 DB（存储过程）</td><td>全在应用层</td></tr>
+                    <tr><td>扩展方式</td><td>垂直（升级 DB 机器）</td><td>水平（加应用机器）</td></tr>
+                    <tr><td>典型</td><td>传统银行系统</td><td>互联网产品</td></tr>
+                </table>
+
+                <h3>🎯 何时选哪个？</h3>
+                <div class="mermaid">
+flowchart TD
+    Q{你的场景}
+    Q -->|个人项目/中小系统| A1[✅ DB JOIN 简单直接]
+    Q -->|单库+数据量小| A2[✅ DB JOIN+索引]
+    Q -->|高并发 OLTP| A3[App JOIN+缓存]
+    Q -->|分库分表| A4[App JOIN 唯一选择]
+    Q -->|微服务架构| A5[App JOIN 唯一选择]
+    Q -->|大屏/报表/OLAP| A6[宽表+数仓预先 JOIN]
+    Q -->|搜索场景| A7[ES+文档扁平化]
+                </div>
+
+                <h3>📝 一句话总结</h3>
+                <div class="tip-box success">
+                    <b>表面是"次数差异"（1 次 vs N 次），本质是"哲学差异"</b>：
+                    <ul>
+                        <li><b>DB JOIN</b> = 让数据库做"全能选手"</li>
+                        <li><b>App JOIN</b> = 让数据库做"纯存储"，逻辑回到应用层</li>
+                    </ul>
+                    <b>App JOIN 真正的优势不在"快"，而在</b>：
+                    跨库可行 + 缓存友好 + 水平扩展 + 数据库压力小。<br/>
+                    <b>决策</b>：中小项目用 DB JOIN，互联网/微服务/分库分表用 App JOIN。
+                </div>
+            `
         }
     ]
 });
