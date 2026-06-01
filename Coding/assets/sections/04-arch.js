@@ -263,20 +263,278 @@ flowchart TB
             html: `
                 <p><b>Domain-Driven Design</b>：以"业务领域"为中心组织代码，与业务专家用<b>统一语言</b>沟通。</p>
 
-                <h3>核心概念</h3>
+                <h3>🎯 核心 3 句话</h3>
+                <ol>
+                    <li><b>统一语言</b>：业务说啥，代码就叫啥</li>
+                    <li><b>充血模型</b>：业务规则在 Entity 里，不在 Service</li>
+                    <li><b>领域为王</b>：先建领域模型，再考虑数据库/UI/API</li>
+                </ol>
+
+                <h3>📦 6 大核心概念</h3>
                 <div class="card-grid">
-                    <div class="card"><div class="card-title">Entity（实体）</div>
-                        <div class="card-desc">有唯一标识，会变化。如 User、Order</div></div>
-                    <div class="card"><div class="card-title">Value Object（值对象）</div>
+                    <div class="card"><div class="card-title">① 统一语言 Ubiquitous Language ⭐</div>
+                        <div class="card-desc">业务专家、产品、开发用同一套词汇</div></div>
+                    <div class="card"><div class="card-title">② Entity 实体</div>
+                        <div class="card-desc">有唯一 ID，状态可变。如 User、Order</div></div>
+                    <div class="card"><div class="card-title">③ Value Object 值对象</div>
                         <div class="card-desc">无 ID 不可变。如 Money、Address</div></div>
-                    <div class="card"><div class="card-title">Aggregate（聚合根）</div>
+                    <div class="card"><div class="card-title">④ Aggregate 聚合（根）</div>
                         <div class="card-desc">一组对象的边界，外部只能通过聚合根访问</div></div>
-                    <div class="card"><div class="card-title">Repository（仓储）</div>
-                        <div class="card-desc">聚合根的持久化</div></div>
-                    <div class="card"><div class="card-title">Domain Service</div>
-                        <div class="card-desc">不适合放在 Entity 里的业务逻辑</div></div>
-                    <div class="card"><div class="card-title">Bounded Context</div>
-                        <div class="card-desc">业务边界，不同上下文可有同名不同义</div></div>
+                    <div class="card"><div class="card-title">⑤ Repository 仓储</div>
+                        <div class="card-desc">装聚合根的"集合"，隐藏 DB 细节</div></div>
+                    <div class="card"><div class="card-title">⑥ Bounded Context 限界上下文</div>
+                        <div class="card-desc">业务边界，同名不同义</div></div>
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>😩 痛点：没用 DDD 的代码</h3>
+                <pre><code class="language-python">@app.post("/transfer")
+def transfer(from_id, to_id, amount):
+    from_acc = db.execute("SELECT * FROM accounts WHERE id=%s", from_id)
+    to_acc = db.execute("SELECT * FROM accounts WHERE id=%s", to_id)
+
+    # 业务规则散落在 Controller 里
+    if from_acc['balance'] < amount: return {"error": "余额不足"}
+    if amount <= 0: return {"error": "金额错误"}
+    if from_acc['status'] == 'frozen': return {"error": "账户冻结"}
+    if from_acc['daily_transfer'] + amount > 50000: return {"error": "超日限"}
+
+    db.execute("UPDATE accounts SET balance=balance-%s WHERE id=%s", amount, from_id)
+    db.execute("UPDATE accounts SET balance=balance+%s WHERE id=%s", amount, to_id)
+    return {"ok": True}</code></pre>
+                <p><b>问题</b>：业务规则散落、Account 概念被肢解成 SQL、加新规则到处改、业务专家看不懂。</p>
+
+                <h3>✅ 用 DDD 重写</h3>
+                <pre><code class="language-python"># 1️⃣ 领域层：业务核心
+class Account:                      # Entity（充血）
+    def __init__(self, id, balance, status, daily_used):
+        self.id = id
+        self._balance = balance
+        self._status = status
+        self._daily_used = daily_used
+
+    # 业务规则就在 Entity 里 —— 用业务语言表达
+    def can_withdraw(self, amount: "Money") -> bool:
+        if amount.value <= 0: return False
+        if self._status == "frozen": return False
+        if self._balance < amount.value: return False
+        if self._daily_used + amount.value > 50000: return False
+        return True
+
+    def withdraw(self, amount: "Money") -> "WithdrewEvent":
+        if not self.can_withdraw(amount):
+            raise InsufficientFundsError()    # 领域异常
+        self._balance -= amount.value
+        self._daily_used += amount.value
+        return WithdrewEvent(self.id, amount)  # 领域事件
+
+    def deposit(self, amount: "Money"):
+        self._balance += amount.value
+
+# 2️⃣ 值对象
+@dataclass(frozen=True)
+class Money:
+    value: int
+    currency: str = "CNY"
+
+# 3️⃣ 仓储：隐藏 DB
+class AccountRepository:
+    def find_by_id(self, id) -> Account: ...
+    def save(self, account: Account): ...
+
+# 4️⃣ 应用服务：薄薄一层，只做编排
+class TransferService:
+    @transactional
+    def transfer(self, from_id, to_id, amount: Money):
+        from_acc = self.repo.find_by_id(from_id)
+        to_acc = self.repo.find_by_id(to_id)
+        event = from_acc.withdraw(amount)   # 领域对象自己负责业务
+        to_acc.deposit(amount)
+        self.repo.save(from_acc)
+        self.repo.save(to_acc)
+        return event
+
+# 5️⃣ Controller：极薄
+@app.post("/transfer")
+def transfer(req: TransferDTO):
+    event = transfer_service.transfer(req.from_id, req.to_id, Money(req.amount))
+    return {"ok": True, "txn_id": event.id}</code></pre>
+
+                <h3>🥊 贫血模型 vs 充血模型（DDD 灵魂）</h3>
+                <table>
+                    <tr><th></th><th>贫血模型（传统）</th><th>充血模型（DDD）</th></tr>
+                    <tr><td>Entity</td><td>只有数据（getter/setter）</td><td>数据 + 行为</td></tr>
+                    <tr><td>业务规则</td><td>散在 Service 里</td><td>集中在 Entity 里</td></tr>
+                    <tr><td>读起来像</td><td>"程序员操作数据库"</td><td>"业务专家讲故事"</td></tr>
+                    <tr><td>测试</td><td>必须 Mock DB</td><td>领域层纯单测</td></tr>
+                    <tr><td>典型</td><td>Spring MVC + 三层架构</td><td>DDD</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>❌ 常见误解：DDD = 文件夹嵌套？</h3>
+                <p>很多人以为"按业务模块分目录"就是 DDD：</p>
+                <pre><code class="language-text">project/
+├── user/        ← 看起来很 DDD？
+├── order/
+└── product/</code></pre>
+                <div class="tip-box warn">
+                    <b>这只是普通的"按业务分包"，任何讲究的项目都这么做</b>。
+                    DDD 真正的灵魂是<b>充血对象 + 业务规则在 Entity</b>。
+                </div>
+
+                <h3>🧪 真假 DDD 测试</h3>
+                <p>同样的目录，看 Entity 里有没有业务方法：</p>
+                <pre><code class="language-python"># A 段：❌ 不是 DDD（贫血）
+@dataclass
+class User:
+    id: int; name: str; age: int; is_vip: bool
+    # 没有任何方法，只是数据袋子
+
+def upgrade_to_vip(user_id):       # 业务规则在外面
+    u = repo.get(user_id)
+    if u.age < 18: raise ...
+    if get_total_spent(u) < 10000: raise ...
+    u.is_vip = True
+
+# B 段：✅ 是 DDD（充血）
+class User:
+    def can_upgrade_to_vip(self) -> bool:
+        return self._age >= 18 and self._total_spent >= 10000
+    def upgrade_to_vip(self):       # 业务规则在 Entity 自己
+        if not self.can_upgrade_to_vip():
+            raise NotEligibleError()
+        self._is_vip = True</code></pre>
+
+                <h3>🏛 DDD 的 3 个层次</h3>
+                <div class="mermaid">
+flowchart TB
+    L1[L1 按业务分目录<br/>= 限界上下文的外在]
+    L2[L2 战略 DDD<br/>限界上下文 + 子域划分]
+    L3[L3 战术 DDD ⭐<br/>Entity/VO/Aggregate 建模]
+
+    L1 -.->|✅ 容易| Easy[任何项目都该做]
+    L2 -.->|进阶| Mid[业务理解 = 微服务边界]
+    L3 -.->|核心| Hard[真正的 DDD 难点]
+
+    style L3 fill:#e8f5e9
+                </div>
+
+                <table>
+                    <tr><th>层次</th><th>类比文件夹</th><th>是 DDD 灵魂吗</th></tr>
+                    <tr><td>L1 按目录分</td><td>✅ 是</td><td>❌ 否，只是结构</td></tr>
+                    <tr><td>L2 限界上下文</td><td>✅ 部分类似</td><td>✅ 战略 DDD</td></tr>
+                    <tr><td>L3 充血对象建模</td><td>❌ 不像</td><td>⭐ DDD 灵魂</td></tr>
+                </table>
+
+                <h3>🏗 完整 DDD 分层 + 目录结构</h3>
+                <div class="mermaid">
+flowchart TB
+    UI[① 用户接口层<br/>Controller/API]
+    App[② 应用层<br/>Application Service<br/>编排 不含业务规则]
+    Domain[③ 领域层 ★ 核心<br/>Entity / VO / Domain Service / Domain Event]
+    Infra[④ 基础设施层<br/>Repository 实现/外部服务/消息]
+    UI --> App
+    App --> Domain
+    App --> Infra
+    Infra -.实现接口.-> Domain
+                </div>
+
+                <pre><code class="language-text">src/
+└── modules/
+    ├── order/                          ← 限界上下文 (= 文件夹分区)
+    │   ├── domain/                     ← ⭐ 领域层 (DDD 灵魂)
+    │   │   ├── order.py                  ← Entity（充血）
+    │   │   ├── order_item.py
+    │   │   ├── money.py                  ← Value Object
+    │   │   ├── order_repository.py       ← 接口
+    │   │   └── events.py                 ← Domain Events
+    │   ├── application/                 ← 编排层（薄）
+    │   │   └── place_order_use_case.py
+    │   ├── infrastructure/              ← 技术细节
+    │   │   └── order_repository_impl.py  ← 接口实现
+    │   └── interfaces/                  ← 对外接口
+    │       └── rest/order_controller.py
+    ├── product/                          ← 另一个限界上下文
+    └── customer/                         ← 另一个限界上下文</code></pre>
+
+                <h3>🌍 限界上下文：同名不同义</h3>
+                <div class="mermaid">
+flowchart LR
+    subgraph 电商系统
+        Sales[销售上下文<br/>客户=买家]
+        Logistics[物流上下文<br/>客户=收货人]
+        Service[客服上下文<br/>客户=投诉人]
+    end
+                </div>
+                <p>同一个"客户"在不同上下文有不同含义和字段——<b>分别建模，不强求统一</b>。
+                这就是为什么<b>微服务天然契合 DDD</b>：每个服务 = 一个限界上下文。</p>
+
+                <h3>📣 领域事件（Domain Event）</h3>
+                <pre><code class="language-python">class Order:
+    def confirm_payment(self):
+        self.status = "paid"
+        return OrderPaidEvent(order_id=self.id, amount=self.total)
+
+# 其他地方订阅
+@on_event(OrderPaidEvent)
+def send_invoice_email(event): ...
+@on_event(OrderPaidEvent)
+def update_inventory(event): ...
+@on_event(OrderPaidEvent)
+def trigger_logistics(event): ...</code></pre>
+                <p><b>解耦</b>：订单服务不用知道还有谁关心"付款成功"这件事。</p>
+
+                <h3>🎯 何时用 DDD？何时不用？</h3>
+                <div class="mermaid">
+flowchart TD
+    Q{你的项目?}
+    Q -->|CRUD 简单系统| No1[❌ 别用 DDD 太重]
+    Q -->|脚本/工具/原型| No2[❌ 别用]
+    Q -->|个人小项目| No3[❌ 别用]
+    Q -->|业务复杂 规则多变| Yes1[✅ 强烈推荐]
+    Q -->|长期维护 团队多人| Yes2[✅ 推荐]
+    Q -->|微服务架构| Yes3[✅ 天然契合]
+    Q -->|业务专家深度参与| Yes4[✅ 必用]
+                </div>
+
+                <table>
+                    <tr><th>✅ 适合 DDD</th><th>❌ 不适合 DDD</th></tr>
+                    <tr><td>银行/金融/保险</td><td>后台管理系统（增删改查）</td></tr>
+                    <tr><td>电商核心交易</td><td>简单 CMS</td></tr>
+                    <tr><td>ERP/CRM</td><td>一次性脚本</td></tr>
+                    <tr><td>物流调度</td><td>数据导入工具</td></tr>
+                    <tr><td>长生命周期核心系统</td><td>一两周做完的项目</td></tr>
+                </table>
+
+                <h3>🤝 DDD 的进阶搭档</h3>
+                <div class="mermaid">
+flowchart LR
+    DDD2[DDD] --> Hex[六边形架构<br/>领域核心独立]
+    DDD2 --> CQRS[CQRS<br/>命令/查询分离]
+    DDD2 --> ES[Event Sourcing<br/>事件溯源]
+    DDD2 --> EDA[事件驱动架构<br/>领域事件传播]
+    DDD2 --> Micro[微服务<br/>限界上下文 = 服务]
+                </div>
+
+                <h3>⚠️ 初学者常见误区</h3>
+                <table>
+                    <tr><th>误区</th><th>真相</th></tr>
+                    <tr><td>DDD 就是分层</td><td>核心是统一语言 + 充血模型</td></tr>
+                    <tr><td>DDD 就是文件夹嵌套</td><td>那只是表面，灵魂在 Entity 建模</td></tr>
+                    <tr><td>所有项目都用 DDD</td><td>简单 CRUD 别用</td></tr>
+                    <tr><td>一开始就追求完美建模</td><td>持续演化，边做边改</td></tr>
+                    <tr><td>把 DB 表 1:1 映射成 Entity</td><td>Entity 是业务概念，不是表</td></tr>
+                    <tr><td>Service 写一堆业务</td><td>业务规则放 Entity</td></tr>
+                    <tr><td>Repository 写复杂 SQL</td><td>Repo 暴露领域语义</td></tr>
+                </table>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话总结</span>
+                    <b>DDD = 用代码精确反映业务领域，让业务概念成为代码的一等公民</b>。<br/>
+                    判断你的代码是不是 DDD：<b>看 Entity 里有没有业务方法</b>。
+                    只有字段 = 贫血 = 不是 DDD；有 <code>can_xxx()</code>/<code>xxx_action()</code> 业务方法 = 充血 = 真 DDD。
                 </div>
             `
         },
