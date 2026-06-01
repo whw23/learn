@@ -860,9 +860,16 @@ for p in REGISTRY:
             title: '11. 事件驱动编程（EDP）',
             html: `
                 <p>程序流程由<b>事件</b>驱动，注册监听器响应事件。</p>
-                <pre><code class="language-javascript">button.addEventListener('click', e => {
+                <pre><code class="language-javascript">// 浏览器 DOM 事件
+button.addEventListener('click', e => {
     console.log('点击了！', e.target);
-});</code></pre>
+});
+
+// Node.js EventEmitter
+emitter.on('userRegistered', user => sendWelcomeEmail(user));
+emitter.on('userRegistered', user => createWorkspace(user));
+emitter.emit('userRegistered', { email: 'a@x.com' });
+// 触发一次 emit，两个监听器都执行</code></pre>
                 <div class="mermaid">
 sequenceDiagram
     User->>UI: 点击按钮
@@ -870,9 +877,98 @@ sequenceDiagram
     EventLoop->>Handler: 调用回调
     Handler-->>UI: 更新视图
                 </div>
+
+                <h3>📍 典型 EDP 场景</h3>
+                <ul>
+                    <li>浏览器 DOM 事件（click/input/scroll）</li>
+                    <li>Node.js EventEmitter（fs.watch、stream、HTTP server）</li>
+                    <li>GUI 框架（Qt 信号槽、WPF Routed Events、SwiftUI Combine）</li>
+                    <li>游戏引擎（Unity Events、Unreal Delegates）</li>
+                    <li>响应式编程的底层基础</li>
+                </ul>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🔗 EDP 与 EDA 的关系：同一思想的两个层次</h3>
+                <p>EDP 和 EDA 紧密相连——它们是<b>"同一思想骨架的两个层次"</b>：</p>
+
+                <div class="mermaid">
+flowchart TB
+    Core[共同思想: 事件 + 监听器 + 异步]
+    Core --> EDP2[EDP 编程范式<br/>进程内]
+    Core --> EDA2[EDA 架构模式<br/>跨进程/跨服务]
+                </div>
+
+                <table>
+                    <tr><th></th><th>EDP（编程范式）</th><th>EDA（架构模式）</th></tr>
+                    <tr><td><b>层次</b></td><td>写代码的方式</td><td>组织系统的方式</td></tr>
+                    <tr><td><b>作用域</b></td><td>单进程</td><td>跨进程/跨服务/跨地域</td></tr>
+                    <tr><td><b>传输介质</b></td><td>函数调用（内存）</td><td>消息队列/HTTP/TCP</td></tr>
+                    <tr><td><b>延迟</b></td><td>微秒</td><td>毫秒~秒</td></tr>
+                    <tr><td><b>持久化</b></td><td>❌ 不持久</td><td>✅ 通常持久</td></tr>
+                    <tr><td><b>失败处理</b></td><td>try/catch</td><td>重试/死信队列/Saga</td></tr>
+                    <tr><td><b>代表工具</b></td><td>EventEmitter / DOM events</td><td>Kafka / RabbitMQ / EventBridge</td></tr>
+                </table>
+
+                <h3>🔄 演进关系</h3>
+                <div class="mermaid">
+flowchart LR
+    A[1994 观察者模式 GoF] -->|进程内| B[EDP 编程范式]
+    B -->|跨进程演化| C[EDA 架构模式]
+    C -->|加事件存储| D[Event Sourcing]
+    D -->|加读写分离| E[CQRS]
+    E -->|加长事务| F[Saga]
+                </div>
+                <p><b>EDA 是 EDP 在分布式系统时代的"长大版"</b>。</p>
+
+                <h3>🎬 实际项目里两者经常并存</h3>
+                <div class="mermaid">
+sequenceDiagram
+    User->>Frontend: 点击下单按钮
+    Note over Frontend: EDP: 浏览器事件
+    Frontend->>Backend: HTTP POST
+    Backend->>Kafka: 发布 OrderCreated
+    Note over Backend,Kafka: EDA: 跨服务事件
+
+    par 跨服务并发
+        InventorySvc->>Kafka: 消费事件
+        InventorySvc->>InventorySvc: 内部 EventBus 分发
+        Note over InventorySvc: EDP: 进程内事件
+    end
+                </div>
+
+                <p><b>三层事件接力</b>：</p>
+                <ol>
+                    <li>前端 EDP：用户点击 → 浏览器 click 事件</li>
+                    <li>后端 EDA：跨服务通信 → Kafka</li>
+                    <li>服务内 EDP：消息处理后内部分发 → EventBus</li>
+                </ol>
+
+                <h3>🌳 事件家族全景</h3>
+                <div class="mermaid">
+flowchart TB
+    Family[事件家族]
+    Family --> EDP3[EDP 编程范式]
+    Family --> EDA3[EDA 架构模式]
+    Family --> RP3[响应式编程]
+    Family --> Obs[观察者模式 GoF]
+    Family --> Pub[Pub/Sub]
+    Family --> Actor[Actor 模型]
+    Family --> Push[推送模式]
+    Family --> MVVM2[MVVM 双向绑定]
+    Family --> SSE2[SSE/WebSocket]
+    Family --> Mirror2[镜像同步]
+                </div>
+
                 <div class="tip-box">
-                    <b>EDP vs 响应式</b>：EDP 是"架构层（系统由事件协作）"，
-                    响应式是"范式层（用流处理这些事件）"——见<a href="#paradigm-reactive">响应式</a>章节末尾辨析。
+                    <b>EDP vs 响应式</b>：响应式编程<b>建立在 EDP 之上</b>——加了流抽象 + 操作符链 + 声明式组合。
+                    详见 <a href="#paradigm-reactive">响应式</a> 章节末尾辨析。
+                </div>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话</span>
+                    <b>EDP</b>（进程内 onclick）和 <b>EDA</b>（Kafka 跨服务）就像<b>"小区业主群"和"全市信息推送"</b>——
+                    思想一致，规模不同。EDA 详见 <a href="#arch-event">架构模式 → 事件驱动架构</a>。
                 </div>
             `
         },

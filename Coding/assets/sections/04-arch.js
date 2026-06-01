@@ -574,7 +574,9 @@ flowchart LR
             id: 'arch-event',
             title: '7. 事件驱动架构（EDA）',
             html: `
-                <p>组件之间通过<b>事件</b>异步通信，<b>极致解耦</b>。</p>
+                <p>组件之间通过<b>事件</b>异步通信，<b>极致解耦</b>。
+                与"<a href="#paradigm-event">EDP 编程范式</a>"是同一思想的<b>跨进程/跨服务</b>放大版。</p>
+
                 <div class="mermaid">
 flowchart LR
     P1[生产者 订单服务] -->|OrderCreated| B[(Event Bus<br/>Kafka/RabbitMQ)]
@@ -582,12 +584,200 @@ flowchart LR
     B --> C2[通知服务]
     B --> C3[积分服务]
                 </div>
-                <h3>变体</h3>
+
+                <h3>🎯 EDA 三要素</h3>
+                <table>
+                    <tr><th>要素</th><th>说明</th></tr>
+                    <tr><td><b>Event 事件</b></td><td>发生了什么（过去时：OrderCreated/UserRegistered）</td></tr>
+                    <tr><td><b>Producer 生产者</b></td><td>发出事件的组件</td></tr>
+                    <tr><td><b>Consumer 消费者</b></td><td>响应事件的组件</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>📊 EDA 三种典型模式</h3>
+                <div class="mermaid">
+flowchart TB
+    EDA2[EDA 三种模式]
+    EDA2 --> M1[Work Queue<br/>任务分发<br/>一对一消费]
+    EDA2 --> M2[Pub/Sub<br/>事件广播<br/>一对多消费]
+    EDA2 --> M3[Event Streaming<br/>事件流持久化<br/>可回放]
+                </div>
+
+                <h4>① Work Queue（任务队列）</h4>
+                <p>一个任务<b>只被一个 worker 消费</b>（竞争消费），用于分发任务。</p>
+                <div class="mermaid">
+flowchart LR
+    P[生产者] -->|任务| Q[(队列)]
+    Q -->|每个任务只被1个 worker 消费| W1[Worker 1]
+    Q --> W2[Worker 2]
+    Q --> W3[Worker 3]
+                </div>
                 <ul>
-                    <li><b>事件通知</b>：只通知"发生了什么"</li>
-                    <li><b>事件溯源</b>（Event Sourcing）：所有变更存为事件流，状态由事件回放得到</li>
-                    <li><b>CQRS</b>：命令（写）与查询（读）分离，常配合事件溯源</li>
+                    <li><b>典型工具</b>：Celery、Sidekiq、RQ、BullMQ、AWS SQS</li>
+                    <li><b>场景</b>：图片处理、邮件发送、报表生成</li>
                 </ul>
+
+                <h4>② Pub/Sub（发布订阅）</h4>
+                <p>一个事件<b>被所有订阅者都收到</b>（广播），用于通知多个下游。</p>
+                <div class="mermaid">
+flowchart LR
+    P[生产者] -->|事件| Topic[(Topic/Exchange)]
+    Topic -->|广播| C1[订阅者1: 库存服务]
+    Topic -->|广播| C2[订阅者2: 通知服务]
+    Topic -->|广播| C3[订阅者3: 积分服务]
+                </div>
+                <ul>
+                    <li><b>典型工具</b>：RabbitMQ、Redis Pub/Sub、NATS、Kafka</li>
+                    <li><b>场景</b>：订单付款成功 → 库存扣减 + 发短信 + 加积分</li>
+                </ul>
+
+                <h4>③ Event Streaming（事件流）</h4>
+                <p>事件<b>持久化保存</b>，支持<b>回放</b>和<b>重新消费</b>。</p>
+                <div class="mermaid">
+flowchart LR
+    P[生产者] -->|连续事件| Stream[(持久化事件流)]
+    Stream --> RT[实时消费者: 大屏]
+    Stream --> ETL[批处理消费者: 数仓]
+    Stream --> AI[AI 消费者: 推荐]
+                </div>
+                <ul>
+                    <li><b>典型工具</b>：Apache Kafka、Apache Pulsar、AWS Kinesis</li>
+                    <li><b>场景</b>：用户行为日志、IoT 传感器数据、事件溯源</li>
+                </ul>
+
+                <h3>🆚 三模式对比</h3>
+                <table>
+                    <tr><th></th><th>Work Queue</th><th>Pub/Sub</th><th>Event Streaming</th></tr>
+                    <tr><td>核心目的</td><td>任务分发</td><td>事件通知</td><td>事件流持久化</td></tr>
+                    <tr><td>消费模式</td><td>一对一（抢占）</td><td>一对多（广播）</td><td>一对多 + 回放</td></tr>
+                    <tr><td>消息留存</td><td>消费完即删</td><td>消费完即删</td><td><b>永久保存</b></td></tr>
+                    <tr><td>可回放</td><td>❌</td><td>❌</td><td>✅</td></tr>
+                    <tr><td>代表</td><td>Celery / SQS</td><td>RabbitMQ / Redis</td><td>Kafka / Pulsar</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🏊 Worker 池：Work Queue 的执行单元</h3>
+                <p>"消息队列 + Worker 池"是 EDA 最经典也最广泛使用的实现：</p>
+
+                <h4>Worker 池形态</h4>
+                <table>
+                    <tr><th>形态</th><th>例子</th></tr>
+                    <tr><td>多线程</td><td>Celery worker <code>--concurrency=10</code></td></tr>
+                    <tr><td>多进程</td><td>Gunicorn / uWSGI workers</td></tr>
+                    <tr><td>多容器</td><td>K8s Deployment replicas=20</td></tr>
+                    <tr><td>Serverless</td><td>AWS Lambda 自动按事件数启动</td></tr>
+                </table>
+
+                <h4>💻 完整 Celery 例子</h4>
+                <pre><code class="language-python"># tasks.py - 定义任务
+from celery import Celery
+app = Celery('myapp', broker='redis://localhost:6379')
+
+@app.task
+def process_image(image_url):
+    img = download(image_url); img = resize(img); upload(img)
+
+# producer.py - 生产者
+@app.post("/upload")
+def upload(file):
+    save(file)
+    process_image.delay(file.url)   # ← 入队，立刻返回
+    return {"ok": True}</code></pre>
+
+                <pre><code class="language-bash"># 启动 worker 池：10 个并发 worker
+$ celery -A tasks worker --concurrency=10</code></pre>
+
+                <div class="mermaid">
+sequenceDiagram
+    User->>Web: POST /upload
+    Web->>Redis: process_image 入队（不等结果）
+    Web-->>User: 1ms 返回 ok
+    par 并发处理
+        Worker1->>Redis: 拉取任务
+        Worker1->>Worker1: 处理图片 10s
+    and
+        Worker2->>Redis: 拉取任务
+        Worker2->>Worker2: 处理图片 10s
+    end
+                </div>
+
+                <h3>🚀 Work Queue 为什么这么流行？</h3>
+                <div class="mermaid">
+flowchart TD
+    Why{为什么这么流行?}
+    Why --> R1[① 异步解耦<br/>生产者不等消费者]
+    Why --> R2[② 削峰填谷<br/>队列缓冲突发流量]
+    Why --> R3[③ 弹性扩展<br/>慢就加 worker]
+    Why --> R4[④ 失败重试<br/>消息可重新消费]
+    Why --> R5[⑤ 优先级分级<br/>不同队列不同 worker 池]
+                </div>
+
+                <h3>⚙️ Work Queue 关键参数</h3>
+                <table>
+                    <tr><th>参数</th><th>含义</th></tr>
+                    <tr><td><code>concurrency</code></td><td>每个 worker 的并发度</td></tr>
+                    <tr><td><code>prefetch</code></td><td>一次拉几个任务</td></tr>
+                    <tr><td><code>ack 机制</code></td><td>处理完才确认（防丢）</td></tr>
+                    <tr><td><code>重试策略</code></td><td>失败几次 + 退避</td></tr>
+                    <tr><td><code>死信队列</code></td><td>处理失败的任务</td></tr>
+                    <tr><td><code>优先级</code></td><td>不同队列不同优先级</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌟 EDA 的高级变体</h3>
+                <table>
+                    <tr><th>变体</th><th>说明</th></tr>
+                    <tr><td><b>事件通知</b></td><td>只通知"发生了什么"</td></tr>
+                    <tr><td><b>事件溯源 Event Sourcing</b></td><td>所有变更存为事件流，状态由事件回放得到</td></tr>
+                    <tr><td><b>CQRS</b></td><td>命令（写）与查询（读）分离，常配合事件溯源</td></tr>
+                    <tr><td><b>Saga</b></td><td>用事件序列管理跨服务长事务（补偿模式）</td></tr>
+                    <tr><td><b>事件存储 EventStore</b></td><td>专门存事件的数据库（EventStoreDB）</td></tr>
+                </table>
+
+                <h3>🛠 EDA 工具生态</h3>
+                <div class="mermaid">
+flowchart TB
+    Tools[EDA 工具]
+    Tools --> MQ[消息队列]
+    MQ --> RMQ[RabbitMQ - 轻量级]
+    MQ --> ROCK[RocketMQ - 阿里]
+    MQ --> ZMQ[ZeroMQ - 嵌入式]
+    Tools --> Stream2[事件流]
+    Stream2 --> Kafka[Apache Kafka ⭐]
+    Stream2 --> Pulsar[Apache Pulsar]
+    Stream2 --> Kinesis[AWS Kinesis]
+    Stream2 --> NATS2[NATS JetStream]
+    Tools --> Task[任务队列]
+    Task --> Celery[Celery - Python]
+    Task --> Sidekiq[Sidekiq - Ruby]
+    Task --> Bull[BullMQ - Node]
+    Task --> SQS[AWS SQS]
+    Tools --> Cloud[云服务]
+    Cloud --> EventBridge[AWS EventBridge]
+    Cloud --> PubSub2[Google Pub/Sub]
+    Cloud --> ServiceBus[Azure Service Bus]
+                </div>
+
+                <h3>🆚 EDA vs 同步 RPC</h3>
+                <table>
+                    <tr><th></th><th>同步 RPC</th><th>EDA</th></tr>
+                    <tr><td>调用方式</td><td>A 直接调 B</td><td>A 发事件，B 订阅</td></tr>
+                    <tr><td>耦合</td><td>紧（A 知道 B 存在）</td><td>松（A 不知 B 存在）</td></tr>
+                    <tr><td>等待</td><td>等 B 返回</td><td>不等</td></tr>
+                    <tr><td>B 挂了</td><td>A 也失败</td><td>A 不受影响</td></tr>
+                    <tr><td>加新订阅者</td><td>需要改 A</td><td>只加新订阅者</td></tr>
+                </table>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话</span>
+                    <b>EDA = 组件通过"事件"异步通信，极致解耦</b>。<br/>
+                    <b>三种模式</b>：Work Queue（任务分发）/ Pub-Sub（事件广播）/ Streaming（持久流）。<br/>
+                    <b>核心信念</b>：生产者不需要知道有谁在听，消费者随时可加入或退出。<br/>
+                    与 <a href="#paradigm-event">EDP 编程范式</a> 是同一思想的两个层次（进程内 vs 跨服务）。
+                </div>
             `
         },
         {
