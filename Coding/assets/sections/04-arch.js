@@ -780,9 +780,261 @@ flowchart TB
                 </div>
             `
         },
+
+        // ============================================================
+        // 黑板架构 + AI 时代复活（专家协作家族）
+        // ============================================================
+        {
+            id: 'arch-blackboard',
+            title: '8. 黑板架构（Blackboard）+ AI 时代复活',
+            html: `
+                <p><b>黑板架构</b> = 多个独立的"专家"组件共享一块"黑板"（共享数据区），
+                各自看黑板上的状态做出贡献，逐步把问题解出来。
+                特别适合<b>没有确定解法、需要多种知识协作</b>的复杂问题。</p>
+
+                <h3>🏥 最直观的类比：医院会诊</h3>
+                <div class="mermaid">
+flowchart TB
+    BB[黑板<br/>病人状态 + 已知信息]
+
+    E1[影像科医生<br/>看 CT 报告] <-.读写.-> BB
+    E2[内科医生<br/>分析症状] <-.读写.-> BB
+    E3[外科医生<br/>判断手术方案] <-.读写.-> BB
+    E4[病理医生<br/>分析活检] <-.读写.-> BB
+    E5[心理医生<br/>评估情绪] <-.读写.-> BB
+
+    Ctrl[控制器<br/>决定谁先发言]
+                </div>
+
+                <ul>
+                    <li>🖼️ <b>黑板</b>：所有信息汇聚的共享数据区</li>
+                    <li>👨‍⚕️ <b>专家（Knowledge Source）</b>：独立的处理模块，各有专长</li>
+                    <li>🎯 <b>控制器</b>：决定下一步该让哪个专家发言</li>
+                </ul>
+
+                <h3>🏗 架构图</h3>
+                <div class="mermaid">
+flowchart TB
+    subgraph KSs[一群知识源 Knowledge Sources]
+        KS1[专家1]
+        KS2[专家2]
+        KS3[专家3]
+        KSn[专家N]
+    end
+    BB2[(黑板 Blackboard<br/>共享状态空间)]
+    Control[控制器 Control<br/>调度/优先级]
+    KS1 <-->|读/写| BB2
+    KS2 <-->|读/写| BB2
+    KS3 <-->|读/写| BB2
+    KSn <-->|读/写| BB2
+    BB2 --> Control
+    Control -->|激活| KSs
+                </div>
+
+                <h3>🎙️ 经典案例：Hearsay-II 语音识别（1970s）</h3>
+                <div class="mermaid">
+sequenceDiagram
+    participant Audio as 音频
+    participant BB as 黑板
+    participant E1 as 信号专家
+    participant E2 as 音素专家
+    participant E3 as 单词专家
+    participant E4 as 语法专家
+    participant E5 as 语义专家
+    Audio->>BB: 原始波形
+    E1->>BB: 读波形 → 写 音频特征
+    E2->>BB: 读特征 → 写 候选音素
+    E3->>BB: 读音素 → 写 候选单词
+    E4->>BB: 读单词 → 写 候选句子
+    E5->>BB: 读句子 → 写 语义解释
+    E5->>BB: 发现矛盾 → 反馈给 E3
+    E3->>BB: 修正候选单词
+    Note over BB: 逐步收敛到最终结果
+                </div>
+
+                <p><b>关键特点</b>：解题过程<b>多次反复</b>，不是一次性流水线。每个专家可以"否决"或"修正"前面的结果。</p>
+
+                <h3>💻 简化代码骨架</h3>
+                <pre><code class="language-python">class Blackboard:
+    def __init__(self):
+        self.data = {}; self.subscribers = []
+    def write(self, key, value):
+        self.data[key] = value
+        for ks in self.subscribers:
+            if ks.can_contribute(self):
+                ks.contribute(self)        # 状态变就触发专家
+    def read(self, key): return self.data.get(key)
+
+class PhonemeExpert:
+    def can_contribute(self, bb):
+        return bb.read('audio_features') and not bb.read('phonemes')
+    def contribute(self, bb):
+        bb.write('phonemes', recognize(bb.read('audio_features')))
+
+class WordExpert:
+    def can_contribute(self, bb):
+        return bb.read('phonemes') and not bb.read('words')
+    def contribute(self, bb):
+        bb.write('words', match_words(bb.read('phonemes')))
+
+bb = Blackboard()
+bb.subscribers = [PhonemeExpert(), WordExpert(), GrammarExpert()]
+bb.write('audio_features', extract(audio))   # 链式反应自动开始</code></pre>
+
+                <h3>📍 适用场景</h3>
+                <table>
+                    <tr><th>场景</th><th>说明</th></tr>
+                    <tr><td>语音识别</td><td>Hearsay-II（祖宗级案例）</td></tr>
+                    <tr><td>AI 专家系统</td><td>1980s 黄金期</td></tr>
+                    <tr><td>计算机视觉</td><td>多算法融合</td></tr>
+                    <tr><td>自动驾驶感知融合</td><td>相机/雷达/激光雷达/GPS 协同</td></tr>
+                    <tr><td>机器人规划</td><td>感知+决策+控制</td></tr>
+                    <tr><td>医疗诊断系统</td><td>多专家协作</td></tr>
+                    <tr><td>军事情报融合</td><td>C4I 系统</td></tr>
+                </table>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🤖 AI 时代复活：Multi-Agent 系统就是新版黑板架构</h3>
+                <p>大语言模型时代，<b>Multi-Agent 系统本质就是黑板架构的现代实现</b>：</p>
+
+                <div class="mermaid">
+flowchart TB
+    BB3[(共享上下文/Memory<br/>= 黑板)]
+    A1[Agent: 搜索专家] <-.读写.-> BB3
+    A2[Agent: 代码专家] <-.读写.-> BB3
+    A3[Agent: 分析专家] <-.读写.-> BB3
+    A4[Agent: 写作专家] <-.读写.-> BB3
+    Orch[Orchestrator<br/>编排器 = 控制器]
+                </div>
+
+                <table>
+                    <tr><th>经典黑板架构</th><th>AI Multi-Agent</th></tr>
+                    <tr><td>黑板 Blackboard</td><td><b>Shared Memory / Context</b></td></tr>
+                    <tr><td>知识源 KS</td><td><b>AI Agent</b>（专业 LLM）</td></tr>
+                    <tr><td>控制器 Control</td><td><b>Orchestrator</b>（如 LangGraph）</td></tr>
+                    <tr><td>调度策略</td><td>LLM 自主决策</td></tr>
+                </table>
+
+                <h4>典型 Multi-Agent 框架</h4>
+                <ul>
+                    <li><b>AutoGen</b>（Microsoft 多 Agent 框架）</li>
+                    <li><b>CrewAI</b>（角色扮演式多 Agent）</li>
+                    <li><b>MetaGPT</b>（多角色软件工程师协作）</li>
+                    <li><b>AutoGPT</b>（自主任务分解）</li>
+                    <li><b>LangGraph</b>（状态化 Agent 工作流）</li>
+                </ul>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>⚡ 三方对比：黑板架构 vs Multi-Agent vs MoE（混合专家模型）</h3>
+
+                <p>三者<b>核心哲学都是"分而治之 + 专家协作"</b>，但<b>层次完全不同</b>：</p>
+
+                <div class="mermaid">
+flowchart TB
+    Core[共同思想: 分而治之 + 专家分工]
+    Core --> S[系统架构层]
+    Core --> M[神经网络结构层]
+    S --> BB4[黑板架构<br/>程序模块协作]
+    S --> MA[Multi-Agent<br/>LLM 协作]
+    M --> MoE[MoE 神经网络<br/>FFN 子网络协作]
+                </div>
+
+                <table>
+                    <tr><th>维度</th><th>黑板架构</th><th>Multi-Agent</th><th>MoE 神经网络</th></tr>
+                    <tr><td><b>层次</b></td><td>系统架构</td><td>系统架构</td><td>神经网络结构</td></tr>
+                    <tr><td><b>专家是什么</b></td><td>代码模块</td><td>AI Agent（LLM）</td><td>FFN 子网络（矩阵权重）</td></tr>
+                    <tr><td><b>专家来源</b></td><td>程序员<b>手写</b></td><td>人类配置 + LLM 能力</td><td>训练<b>自动学出</b></td></tr>
+                    <tr><td><b>有自我意识</b></td><td>是（主动看黑板）</td><td>是（LLM 自主决策）</td><td>否（被路由器选）</td></tr>
+                    <tr><td><b>协调者</b></td><td>控制器</td><td>Orchestrator</td><td>Router/Gate</td></tr>
+                    <tr><td><b>共享空间</b></td><td>黑板</td><td>Memory/Context</td><td>无（专家间不通信）</td></tr>
+                    <tr><td><b>解题过程</b></td><td>多次迭代</td><td>多轮对话</td><td>一次前向传播</td></tr>
+                    <tr><td><b>可解释</b></td><td>✅ 完全透明</td><td>⚠️ 部分（看对话）</td><td>❌ 黑盒</td></tr>
+                    <tr><td><b>专家是否专精</b></td><td>人指定</td><td>人配置 prompt</td><td><b>自发涌现</b></td></tr>
+                    <tr><td><b>代表</b></td><td>Hearsay-II / 自动驾驶</td><td>AutoGen / CrewAI</td><td>Mixtral / GPT-4 / DeepSeek-V3</td></tr>
+                </table>
+
+                <h4>💡 关键差别：专家的"物理形态"不同</h4>
+                <div class="mermaid">
+flowchart LR
+    subgraph s1[黑板架构的专家]
+        BE[1000 行 Python 代码<br/>有 if/else 逻辑<br/>程序员设计]
+    end
+    subgraph s2[Multi-Agent 的专家]
+        AE[LLM + Prompt<br/>角色定义<br/>人配置]
+    end
+    subgraph s3[MoE 的专家]
+        ME[一组矩阵权重<br/>FFN 的 W1 W2<br/>训练学出来]
+    end
+                </div>
+
+                <h4>🆚 MoE 是什么？</h4>
+                <p><b>MoE（Mixture of Experts）</b>= 大模型节省算力的<b>神经网络结构</b>，
+                把 FFN 拆成多个"专家"子网络，每个 token <b>只激活 top-k 个</b>专家。</p>
+
+                <div class="mermaid">
+flowchart LR
+    Input2[输入 token] --> Router2[Router/Gate]
+    Router2 -->|选 top-2| E1[专家1]
+    Router2 -->|选 top-2| E2[专家2]
+    Router2 -.其他不参与.-x E3[E3~E8]
+    E1 --> Sum[加权求和]
+    E2 --> Sum
+    Sum --> Output2[输出]
+                </div>
+
+                <table>
+                    <tr><th>MoE 模型</th><th>参数规模</th></tr>
+                    <tr><td>1991 Jacobs et al.</td><td>最早提出</td></tr>
+                    <tr><td>2017 Google Sparsely-Gated MoE</td><td>1370 亿</td></tr>
+                    <tr><td>2021 Switch Transformer</td><td>万亿</td></tr>
+                    <tr><td>2023 GPT-4（推测）</td><td>1.8T 总 / 220B 激活</td></tr>
+                    <tr><td>2023 Mixtral 8x7B</td><td>47B 总 / 13B 激活</td></tr>
+                    <tr><td>2024 DeepSeek-V3</td><td>671B 总 / 37B 激活</td></tr>
+                </table>
+                <p>→ <b>2024 几乎所有顶级大模型都用 MoE</b>——大模型容量 + 小模型速度。</p>
+
+                <h3>🌳 完整"专家协作家族"</h3>
+                <div class="mermaid">
+flowchart TB
+    Family[AI 时代的专家协作家族]
+    Family --> A[模型内部协作]
+    Family --> B[模型之间协作]
+    Family --> C[系统之间协作]
+    A --> A1[MoE 神经网络<br/>子网络协作]
+    A --> A2[Multi-Head Attention<br/>多头协作]
+    B --> B1[Multi-Agent LLM<br/>AutoGen/CrewAI]
+    B --> B2[Ensemble 模型集成]
+    B --> B3[Router LLM<br/>选不同模型]
+    C --> C1[黑板架构<br/>传统系统]
+    C --> C2[微服务协作]
+    C --> C3[Multi-Agent 工作流<br/>LangGraph]
+                </div>
+
+                <h3>🎯 类比</h3>
+                <ul>
+                    <li>🏥 <b>黑板架构</b> = <b>医院会诊</b>（人类医生开会）</li>
+                    <li>👥 <b>Multi-Agent</b> = <b>公司团队</b>（每人独立但目标一致）</li>
+                    <li>🧠 <b>MoE</b> = <b>大脑分工</b>（不同脑区处理不同信号，自动协调）</li>
+                </ul>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话总结</span>
+                    <b>黑板架构、Multi-Agent、MoE 是"分而治之 + 专家协作"思想在不同层次的实现</b>：
+                    <ul>
+                        <li><b>黑板架构</b>：1970s 经典，程序模块协作，可解释</li>
+                        <li><b>Multi-Agent</b>：黑板架构的 AI 复活，LLM 协作</li>
+                        <li><b>MoE</b>：神经网络内部的"专家"，训练学出，黑盒</li>
+                    </ul>
+                    <b>同一信念</b>：<b>"一群专才 > 一个全才"</b>——这是从软件工程到深度学习一以贯之的智慧。
+                </div>
+            `
+        },
+
         {
             id: 'arch-others',
-            title: '8. 其他架构模式',
+            title: '9. 其他架构模式',
             html: `
                 <table>
                     <tr><th>模式</th><th>说明</th><th>典型应用</th></tr>
@@ -790,11 +1042,11 @@ flowchart TB
                     <tr><td>客户端-服务器 C/S</td><td>请求-响应模型</td><td>所有 Web 应用</td></tr>
                     <tr><td>P2P</td><td>对等节点直连</td><td>BitTorrent、区块链</td></tr>
                     <tr><td>主从架构 Master-Slave</td><td>主写从读</td><td>MySQL 主从、Redis</td></tr>
-                    <tr><td>黑板架构 Blackboard</td><td>多专家共享数据求解</td><td>AI、语音识别</td></tr>
                     <tr><td>插件式 Microkernel</td><td>核心 + 插件</td><td>VS Code、Eclipse</td></tr>
                     <tr><td>BFF</td><td>Backend For Frontend，按端定制后端</td><td>移动 App + Web</td></tr>
                     <tr><td>Lambda / Kappa</td><td>大数据批+流 / 纯流</td><td>实时数仓</td></tr>
                 </table>
+                <p>（"黑板架构"已独立成上一小节，请见 <a href="#arch-blackboard">8. 黑板架构 + AI 时代复活</a>。）</p>
             `
         }
     ]
