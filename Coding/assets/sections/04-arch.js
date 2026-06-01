@@ -1442,20 +1442,330 @@ flowchart TD
             `
         },
 
+        // ============================================================
+        // 主从架构（Master-Slave）+ 备份/容灾
+        // ============================================================
+        {
+            id: 'arch-master-slave',
+            title: '10. 主从架构 + 备份 + 容灾',
+            html: `
+                <p><b>主从架构（Master-Slave Replication）</b>是数据系统最经典的高可用方案。
+                <b>常见误解</b>：主从主要用于备份。<b>真相</b>：备份只是顺带产物，主从有 5 大用途。</p>
+
+                <h3>🆚 先理清概念：主从 ≠ 备份 ≠ 容灾</h3>
+                <table>
+                    <tr><th></th><th>主从架构</th><th>备份</th><th>容灾</th></tr>
+                    <tr><td><b>同步频率</b></td><td>实时（毫秒级）</td><td>定期（小时/天）</td><td>实时或异步</td></tr>
+                    <tr><td><b>数据延迟</b></td><td>极低</td><td>可能很久</td><td>中等</td></tr>
+                    <tr><td><b>从节点</b></td><td>在线提供服务</td><td>离线存档</td><td>在线但通常不提供服务</td></tr>
+                    <tr><td><b>能切换吗</b></td><td>是（自动/手动）</td><td>否（需要恢复）</td><td>是（应急切换）</td></tr>
+                    <tr><td><b>主要目的</b></td><td>性能 + 高可用</td><td>防数据丢失</td><td>防机房灾难</td></tr>
+                </table>
+                <div class="tip-box">
+                    <b>三者互补，不可互相替代</b>——生产级数据库架构需要"主从 + 备份 + 容灾"三件套。
+                </div>
+
+                <h3>🎯 主从架构 5 大核心用途</h3>
+                <div class="mermaid">
+flowchart TB
+    MS[主从架构核心用途]
+    MS --> U1[① 读写分离<br/>性能扩展]
+    MS --> U2[② 高可用 HA<br/>主挂从顶上]
+    MS --> U3[③ 容灾备份<br/>异地副本]
+    MS --> U4[④ 负载分流<br/>报表/分析]
+    MS --> U5[⑤ 数据隔离<br/>开发/测试环境]
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>① 读写分离（最重要）⭐</h3>
+                <div class="mermaid">
+flowchart LR
+    App[应用层]
+    App -->|写 INSERT/UPDATE/DELETE| Master[(主库 Master)]
+    App -->|读 SELECT| Slave1[(从库 1)]
+    App -->|读 SELECT| Slave2[(从库 2)]
+    App -->|读 SELECT| Slave3[(从库 3)]
+    Master -.异步复制 binlog.-> Slave1
+    Master -.异步复制.-> Slave2
+    Master -.异步复制.-> Slave3
+                </div>
+                <ul>
+                    <li>大多数业务<b>读:写 ≈ 10:1</b>（电商查商品多、下单少）</li>
+                    <li>1 主扛不住读 → <b>加从库横向扩展</b></li>
+                    <li>主库专注写入 → 性能稳定</li>
+                    <li><b>典型部署</b>：1 主 + 2~5 从，用 ShardingSphere / ProxySQL 自动路由</li>
+                </ul>
+
+                <h3>② 高可用 HA（主挂从顶上）</h3>
+                <div class="mermaid">
+sequenceDiagram
+    participant App
+    participant Master
+    participant Slave
+    participant Sentinel as 哨兵/HA 工具
+    App->>Master: 写请求
+    Master-->>App: OK
+    Note over Master: 主库宕机！
+    Sentinel->>Master: 心跳检测失败
+    Sentinel->>Slave: 提升为新主
+    Sentinel->>App: 更新配置 VIP 切换
+    App->>Slave: 后续写请求
+    Note over Slave: 现在是 Master
+                </div>
+                <table>
+                    <tr><th>数据库</th><th>HA 工具</th></tr>
+                    <tr><td>MySQL</td><td>MHA、Orchestrator、MGR</td></tr>
+                    <tr><td>Redis</td><td>Sentinel、Cluster</td></tr>
+                    <tr><td>PostgreSQL</td><td>Patroni、repmgr</td></tr>
+                </table>
+                <p><b>RTO</b>（故障恢复时间）：秒级到分钟级。</p>
+
+                <h3>③ 容灾备份（异地从库）</h3>
+                <div class="mermaid">
+flowchart TB
+    subgraph Beijing[北京机房]
+        M[主库]
+        S1[从库 1]
+        S2[从库 2]
+    end
+    subgraph Shanghai[上海机房 灾备]
+        S3[从库 3]
+    end
+    subgraph Singapore[新加坡 海外]
+        S5[从库 5]
+    end
+    M -.同步.-> S1
+    M -.同步.-> S2
+    M -.跨区同步.-> S3
+    M -.跨国同步.-> S5
+                </div>
+                <ul>
+                    <li>北京机房整体故障 → 切到上海继续服务</li>
+                    <li>海外用户就近读取（地理就近）</li>
+                </ul>
+
+                <h3>④ 负载分流（重活给从库）</h3>
+                <ul>
+                    <li>财务跑月度报表 → 在从库跑，不影响主库交易</li>
+                    <li>大数据每天 ETL → 从从库读，避免锁主库</li>
+                    <li>ES 全文索引同步 → 从从库订阅 binlog</li>
+                </ul>
+
+                <h3>⑤ 数据隔离（环境复制）</h3>
+                <p>用从库给开发/测试<b>提供真实数据</b>，又不影响生产。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>⚙️ 主从复制的工作原理（MySQL 为例）</h3>
+                <div class="mermaid">
+sequenceDiagram
+    participant App
+    participant Master
+    participant Binlog as 主库 binlog
+    participant Slave as 从库
+    App->>Master: INSERT/UPDATE
+    Master->>Master: 执行 SQL + 改数据
+    Master->>Binlog: 记录变更 binary log
+    Binlog-->>Slave: IO 线程拉取
+    Slave->>Slave: 写入 relay log
+    Slave->>Slave: SQL 线程重放
+    Note over Slave: 从库数据与主库一致
+                </div>
+                <p><b>3 个线程</b>：</p>
+                <ol>
+                    <li>主库 <b>dump 线程</b>：把 binlog 发给从库</li>
+                    <li>从库 <b>IO 线程</b>：接收 binlog 写到 relay log</li>
+                    <li>从库 <b>SQL 线程</b>：读 relay log 重放 SQL</li>
+                </ol>
+
+                <h3>📊 三种同步模式</h3>
+                <table>
+                    <tr><th>模式</th><th>工作方式</th><th>优</th><th>劣</th></tr>
+                    <tr><td><b>异步 Async</b> ⭐ 最常见</td><td>主库不等从库 ACK</td><td>性能高</td><td>主挂可能丢数据</td></tr>
+                    <tr><td><b>全同步 Sync</b></td><td>主库等所有从库 ACK</td><td>数据绝不丢</td><td>性能差，从库挂会卡住主库</td></tr>
+                    <tr><td><b>半同步 Semi-Sync</b> ⭐ 折中</td><td>主库等至少 1 个从库 ACK</td><td>兼顾性能和安全</td><td>仍可能少量延迟</td></tr>
+                </table>
+                <div class="tip-box">
+                    <b>生产实践</b>：99% 项目用<b>异步</b>；金融关键业务用<b>半同步</b>；几乎没人用全同步。
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🌐 主从架构在不同系统中的形态</h3>
+                <div class="mermaid">
+flowchart TB
+    MS2[主从架构应用]
+    MS2 --> DB[数据库]
+    MS2 --> Cache[缓存]
+    MS2 --> File[文件系统]
+    MS2 --> MQ[消息队列]
+    MS2 --> Search[搜索]
+    MS2 --> Big[大数据]
+
+    DB --> DB1[MySQL Master-Slave]
+    DB --> DB2[PostgreSQL Streaming Replication]
+    DB --> DB3[MongoDB Replica Set]
+
+    Cache --> C1[Redis Master-Slave]
+    Cache --> C2[Redis Sentinel/Cluster]
+
+    File --> F1[HDFS NameNode + Standby]
+    File --> F2[Ceph OSD 副本]
+
+    MQ --> MQ1[Kafka Leader/Follower 分区]
+    MQ --> MQ2[RabbitMQ Mirror]
+
+    Search --> S1[ES Primary/Replica]
+
+    Big --> B1[ZooKeeper Leader/Follower]
+    Big --> B2[Etcd Raft]
+                </div>
+
+                <h3>🆚 与其他类似架构的对比</h3>
+                <table>
+                    <tr><th>架构</th><th>特点</th><th>代表</th></tr>
+                    <tr><td><b>主从 Master-Slave</b></td><td>1 主多从，只主能写</td><td>MySQL 传统</td></tr>
+                    <tr><td>双主 Master-Master</td><td>互为主从，都能写</td><td>MySQL MM、PG BDR</td></tr>
+                    <tr><td>多主 Multi-Primary</td><td>多个节点都能写</td><td>MySQL Group Replication</td></tr>
+                    <tr><td>分片 Sharding</td><td>数据按规则拆到不同主库</td><td>MongoDB、TiDB</td></tr>
+                    <tr><td>共识 Raft/Paxos</td><td>多副本一致性算法</td><td>Etcd、Consul、TiKV</td></tr>
+                </table>
+                <p>→ 现代系统逐渐从"主从"演化为"<b>共识算法 + 自动选主</b>"（如 TiDB、CockroachDB）。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>⚠️ 主从架构的典型问题</h3>
+
+                <h4>1. 主从延迟（最经典痛点）</h4>
+                <div class="mermaid">
+sequenceDiagram
+    User->>App: 提交订单
+    App->>Master: INSERT
+    Master-->>App: OK
+    App->>User: 提交成功
+    User->>App: 立刻查订单列表
+    App->>Slave: SELECT
+    Slave-->>App: 没有这个订单！
+    Note over Slave: 主从同步还没完成 延迟 100ms
+                </div>
+                <p><b>解决方案</b>：</p>
+                <ul>
+                    <li>强一致需求 → <b>强制读主</b></li>
+                    <li>用 GTID 等机制确认同步完成再读</li>
+                    <li>中间件路由支持"刚写过 N 秒内读主"</li>
+                </ul>
+
+                <h4>2. 故障切换数据丢失</h4>
+                <p>异步复制下主挂了，未同步到从库的数据<b>永久丢失</b>。<br/>
+                → 解决：半同步 + 定期备份。</p>
+
+                <h4>3. 从库一致性问题</h4>
+                <p>多个从库各自延迟不同 → 用户每次查可能看到不同数据。<br/>
+                → 解决：会话粘性（一个用户始终读同一个从库）。</p>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>💾 真正的备份是怎么做的？</h3>
+                <div class="mermaid">
+flowchart TB
+    Backup[备份方案]
+    Backup --> B1[① 物理备份<br/>直接拷贝数据文件]
+    Backup --> B2[② 逻辑备份<br/>导出 SQL/JSON]
+    Backup --> B3[③ binlog 增量<br/>+ 全量基础]
+    Backup --> B4[④ 快照<br/>云盘/LVM 瞬时拍照]
+
+    B1 --> T1[mysqldump xtrabackup<br/>pg_basebackup]
+    B2 --> T2[mysqldump --single-transaction]
+    B3 --> T3[binlog + 定期全量]
+    B4 --> T4[AWS RDS snapshot<br/>阿里云快照]
+                </div>
+
+                <p><b>生产级备份策略</b>：</p>
+                <ul>
+                    <li>每天一次<b>全量备份</b></li>
+                    <li>实时保留 <b>binlog 增量</b></li>
+                    <li>数据丢失能<b>回滚到任意时间点</b>（PITR, Point-In-Time Recovery）</li>
+                </ul>
+
+                <h3>🏗 三件套的关系</h3>
+                <div class="mermaid">
+flowchart LR
+    Master2[主库] -->|实时同步| Slave3[从库<br/>高可用 + 读写分离]
+    Master2 -->|每天全量| Backup3[(备份文件<br/>防止误删)]
+    Master2 -->|跨区同步| DR[异地从库<br/>容灾]
+                </div>
+
+                <hr style="margin: 30px 0; border: 0; border-top: 2px dashed #4CAF50;"/>
+
+                <h3>🛒 一个真实电商架构示例</h3>
+                <div class="mermaid">
+flowchart TB
+    App[电商应用]
+    App --> Cache[(Redis 缓存)]
+    Cache -.miss.-> Router[ShardingSphere<br/>读写路由]
+
+    Router -->|写| M[(MySQL 主库)]
+    Router -->|普通读| S1[(从库 1)]
+    Router -->|普通读| S2[(从库 2)]
+    Router -->|刚写过的强一致读| M
+    Router -->|后台报表| S3[(从库 3 报表专用)]
+
+    M -.binlog.-> ES[Elasticsearch 搜索]
+    M -.binlog.-> DW[(数仓)]
+    M -.每天全量备份.-> Backup[(备份 S3)]
+    M -.异地同步.-> DR[(深圳灾备从库)]
+                </div>
+
+                <p><b>这个架构同时利用了</b>：</p>
+                <ol>
+                    <li>读写分离（性能）</li>
+                    <li>多从库（高可用）</li>
+                    <li>异地从库（容灾）</li>
+                    <li>专用从库（报表分流）</li>
+                    <li>binlog 流式（ES/数仓同步）</li>
+                    <li>独立备份（防误删）</li>
+                </ol>
+
+                <h3>📋 实战建议</h3>
+                <div class="mermaid">
+flowchart TD
+    Q{你的项目?}
+    Q -->|个人项目| A1[单库即可 别折腾]
+    Q -->|QPS &lt; 1000| A2[1 主 + 1 从 读写分离]
+    Q -->|QPS 1000~10000| A3[1 主 + N 从 + 缓存]
+    Q -->|核心业务高可用| A4[1 主 + N 从 + 半同步 + Sentinel/MHA]
+    Q -->|跨地域服务| A5[多区域从库 + 自动 failover]
+    Q -->|超大规模| A6[分片 Sharding + 主从]
+                </div>
+
+                <div class="tip-box success">
+                    <span class="tip-title"><i class="fa fa-trophy"></i> 一句话总结</span>
+                    <b>主从架构 ≠ 备份</b>。它的 5 大用途：<br/>
+                    ① <b>读写分离</b>（性能）② <b>高可用</b>（HA）③ <b>容灾</b>（异地）
+                    ④ <b>负载分流</b>（报表）⑤ <b>数据隔离</b>（测试）<br/>
+                    <b>生产级数据库需要"主从 + 备份 + 容灾"三件套</b>，缺一不可。<br/>
+                    <b>相关概念</b>：与<a href="#arch-mvc-family">CQRS</a>（读写模型分离）思想一致，
+                    与<a href="#arch-mirror-family">镜像同步家族</a>同源。
+                </div>
+            `
+        },
+
         {
             id: 'arch-others',
-            title: '10. 其他架构模式',
+            title: '11. 其他架构模式',
             html: `
                 <table>
                     <tr><th>模式</th><th>说明</th><th>典型应用</th></tr>
                     <tr><td>管道-过滤器 Pipe-Filter</td><td>数据流经一连串过滤器</td><td>Unix 管道、流处理</td></tr>
                     <tr><td>客户端-服务器 C/S</td><td>请求-响应模型</td><td>所有 Web 应用</td></tr>
                     <tr><td>P2P</td><td>对等节点直连</td><td>BitTorrent、区块链</td></tr>
-                    <tr><td>主从架构 Master-Slave</td><td>主写从读</td><td>MySQL 主从、Redis</td></tr>
                     <tr><td>BFF</td><td>Backend For Frontend，按端定制后端</td><td>移动 App + Web</td></tr>
                     <tr><td>Lambda / Kappa</td><td>大数据批+流 / 纯流</td><td>实时数仓</td></tr>
                 </table>
-                <p>已独立成节的模式：<a href="#arch-blackboard">8. 黑板架构</a>、<a href="#arch-microkernel">9. 插件式架构</a>。</p>
+                <p>已独立成节的模式：<a href="#arch-blackboard">8. 黑板架构</a>、
+                <a href="#arch-microkernel">9. 插件式架构</a>、
+                <a href="#arch-master-slave">10. 主从架构</a>。</p>
             `
         }
     ]
