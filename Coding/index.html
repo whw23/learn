@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编程概念全景图谱 | Programming Concepts</title>
+
+    <!-- 样式：菜鸟教程风格 -->
+    <link rel="stylesheet" href="./assets/style.css">
+
+    <!-- Prism 代码高亮 -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="#home" class="logo">
+                <i class="fa fa-code"></i> 编程概念全景图谱
+            </a>
+            <nav class="top-nav">
+                <a href="#paradigm">编程范式</a>
+                <a href="#db-normal">数据库范式</a>
+                <a href="#pattern">设计模式</a>
+                <a href="#arch">架构模式</a>
+                <a href="#layer">分层架构</a>
+                <a href="#dto">数据对象</a>
+                <a href="#extra">其他概念</a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 侧边目录 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-search">
+                <input type="text" id="searchInput" placeholder="🔍 搜索概念...">
+            </div>
+            <nav id="sideNav"><!-- JS 动态生成 --></nav>
+        </aside>
+
+        <!-- 主要内容 -->
+        <main class="content" id="content">
+            <!-- 内容由 sections.js 动态注入 -->
+        </main>
+    </div>
+
+    <!-- 返回顶部 -->
+    <button class="back-to-top" id="backToTop" title="返回顶部"><i class="fa fa-arrow-up"></i></button>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>📚 编程概念全景图谱 · 学习笔记 · 持续更新中</p>
+    </footer>
+
+    <!-- Mermaid 图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
+    <!-- Prism 代码高亮 -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- 内容数据（分章节） -->
+    <script src="./assets/sections/00-home.js"></script>
+    <script src="./assets/sections/01-paradigm.js"></script>
+    <script src="./assets/sections/02-db-normal.js"></script>
+    <script src="./assets/sections/03-pattern.js"></script>
+    <script src="./assets/sections/04-arch.js"></script>
+    <script src="./assets/sections/05-layer.js"></script>
+    <script src="./assets/sections/06-dto.js"></script>
+    <script src="./assets/sections/07-extra.js"></script>
+
+    <!-- 主程序 -->
+    <script src="./assets/app.js"></script>
+</body>
+</html>
