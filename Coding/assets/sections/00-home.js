@@ -21,10 +21,14 @@ flowchart TB
     A --> E[分层架构 Layered<br/>怎么划分模块]
     A --> F[数据对象 DTO/VO/PO<br/>怎么传递数据]
     A --> G[数据库范式 Normal Form<br/>怎么设计表]
-    B --> H[OOP/FP/PP/逻辑式/...]
+    A --> AI[🤖 AI 时代编程<br/>SDD/MCP/Skill/Agent]
+    B --> H[OOP/FP/PP/逻辑式/响应式/...]
     C --> I[GoF 23种 + 现代模式]
     D --> J[MVC/MVVM/微服务/事件驱动]
     E --> K[Controller/Service/Repository]
+    AI --> AI1[XDD 方法论 + Function Call + MCP]
+
+    style AI fill:#e8f5e9
         </div>
 
         <h2>🧭 推荐学习路径</h2>
@@ -48,6 +52,11 @@ flowchart TB
                 <div class="card-icon"><i class="fa fa-cubes"></i></div>
                 <div class="card-title">系统设计</div>
                 <div class="card-desc">SOLID → 整洁架构 → 六边形 → 事件驱动</div>
+            </div>
+            <div class="card" style="border: 2px solid #4CAF50;">
+                <div class="card-icon"><i class="fa fa-magic"></i></div>
+                <div class="card-title">🤖 AI 时代</div>
+                <div class="card-desc">SDD → MCP → Agent Skill → Function Call → Vibe Coding</div>
             </div>
         </div>
 
