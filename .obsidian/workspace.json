@@ -37,7 +37,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": true
+                "autoReveal": true,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "文件列表"
@@ -171,8 +173,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -193,7 +194,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "fb4cbc5aed6b7746",
+  "active": "3100ec01643c23ee",
   "lastOpenFiles": [
     "未命名.base",
     "DataBase/DataBase.md",

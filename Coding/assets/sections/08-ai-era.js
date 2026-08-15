@@ -45,7 +45,7 @@ flowchart TB
 
         <div class="tip-box success">
             <span class="tip-title"><i class="fa fa-lightbulb-o"></i> 本章学习路径</span>
-            ① XDD 家族对比 → ② SDD 详解 → ③ POP 在 AI 时代的演进 → ④ Function Call → ⑤ MCP → ⑥ Agent Skill → ⑦ Vibe Coding → ⑧ 推送模式全家桶 → ⑨ AI 时代术语速查
+            ① XDD 家族对比 → ② SDD 详解 → ③ POP 在 AI 时代的演进 → ④ Function Call → ⑤ MCP → ⑥ Agent Skill → ⑦ Vibe Coding → ⑧ 推送模式全家桶 → ⑨ <a href="#ai-agent-terminology">AI Agent 术语速查</a> → ⑩ AI 时代术语速查
         </div>
     `,
     subs: [

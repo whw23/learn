@@ -5,6 +5,8 @@ window.SECTIONS.push({
     icon: 'fa-bars',
     intro: `
         <p>后端项目通常按<b>"职责"</b>分层。依赖<b>自上而下单向流动</b>，下层不知道上层存在。</p>
+        <p>代码组织还有另一个维度：按业务功能<b>纵切</b> vs 按技术职责<b>横切</b>。详见
+        <a href="#slice">🔪 纵切与横切</a> 章节。</p>
 
         <h2>📊 经典 N 层架构总图</h2>
         <div class="mermaid">
