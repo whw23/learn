@@ -80,7 +80,8 @@
       "args": [
         "@agentclientprotocol/claude-agent-acp@latest"
       ],
-      "env": []
+      "env": [],
+      "enabled": true
     },
     {
       "id": "Codex",
@@ -89,7 +90,8 @@
       "args": [
         "@agentclientprotocol/codex-acp@latest"
       ],
-      "env": []
+      "env": [],
+      "enabled": true
     },
     {
       "id": "KiloCode",
@@ -98,7 +100,8 @@
       "args": [
         "acp"
       ],
-      "env": []
+      "env": [],
+      "enabled": true
     },
     {
       "id": "OpenCode",
@@ -107,7 +110,8 @@
       "args": [
         "acp"
       ],
-      "env": []
+      "env": [],
+      "enabled": true
     },
     {
       "id": "piAgent",
@@ -116,7 +120,8 @@
       "args": [
         "pi-acp"
       ],
-      "env": []
+      "env": [],
+      "enabled": true
     }
   ],
   "defaultAgentId": "KiloCode",

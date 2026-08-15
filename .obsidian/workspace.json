@@ -11,10 +11,10 @@
             "id": "6d8a293130fd564c",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "新标签页"
+              "icon": "lucide-git-fork",
+              "title": "关系图谱"
             }
           }
         ]
@@ -106,12 +106,11 @@
               "title": "Agent sessions"
             }
           }
-        ],
-        "currentTab": 5
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 340.109375
+    "width": 273.51953125
   },
   "right": {
     "id": "0ec181b6358f6a87",
@@ -166,13 +165,23 @@
               "icon": "lucide-tags",
               "title": "标签"
             }
+          },
+          {
+            "id": "c15ec9899a88ede8",
+            "type": "leaf",
+            "state": {
+              "type": "agent-client-chat-view",
+              "state": {},
+              "icon": "bot-message-square",
+              "title": "New session"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 895.27734375
+    "width": 553.13671875
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,13 +204,13 @@
       "agent-client:Open agent client": false
     }
   },
-  "active": "e1a22cb12498a3e9",
+  "active": "6d8a293130fd564c",
   "lastOpenFiles": [
+    "未命名.base",
     "DataBase/Neo4j/Neo4j.md",
     "README.md",
     "2026-08-16.md",
     "未命名 1.base",
-    "未命名.base",
     "DataBase/DataBase.md",
     "web+nginx/Web+Nginx.md",
     "web+nginx/nginx/Nginx.md",
