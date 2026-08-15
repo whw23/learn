@@ -4,22 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "4da1aa058ed6f803",
+        "id": "81821ef82d9d09f8",
         "type": "tabs",
         "children": [
           {
-            "id": "fe9f0ddde93a1399",
+            "id": "6d8a293130fd564c",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "README.md",
-                "mode": "source",
-                "source": false,
-                "backlinks": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "README"
+              "title": "新标签页"
             }
           }
         ]
@@ -93,7 +88,6 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DataBase/Neo4j/Neo4j.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -101,12 +95,23 @@
               "icon": "lucide-list",
               "title": "大纲"
             }
+          },
+          {
+            "id": "e1a22cb12498a3e9",
+            "type": "leaf",
+            "state": {
+              "type": "agent-client-session-manager",
+              "state": {},
+              "icon": "layout-list",
+              "title": "Agent sessions"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 340.109375
   },
   "right": {
     "id": "0ec181b6358f6a87",
@@ -122,7 +127,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": false
               },
@@ -163,11 +167,12 @@
               "title": "标签"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
-    "width": 438.61328125
+    "width": 895.27734375
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -186,17 +191,18 @@
       "pdf-plus:PDF++: Toggle auto-paste": false,
       "mermaid-tools:Open Mermaid Toolbar": false,
       "media-extended:打开媒体库": false,
-      "media-extended:打开媒体快速切换器": false
+      "media-extended:打开媒体快速切换器": false,
+      "agent-client:Open agent client": false
     }
   },
-  "active": "fe9f0ddde93a1399",
+  "active": "e1a22cb12498a3e9",
   "lastOpenFiles": [
-    "2026-08-16.md",
+    "DataBase/Neo4j/Neo4j.md",
     "README.md",
+    "2026-08-16.md",
     "未命名 1.base",
     "未命名.base",
     "DataBase/DataBase.md",
-    "DataBase/Neo4j/Neo4j.md",
     "web+nginx/Web+Nginx.md",
     "web+nginx/nginx/Nginx.md",
     "System/wsl/WSL.md",

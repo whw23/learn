@@ -1,0 +1,182 @@
+{
+  "presetAgents": {
+    "claude-code-acp": {
+      "id": "claude-code-acp",
+      "displayName": "Claude Code",
+      "apiKeySecretId": "",
+      "command": "claude-agent-acp",
+      "args": [],
+      "env": [],
+      "enabled": false
+    },
+    "codex-acp": {
+      "id": "codex-acp",
+      "displayName": "Codex",
+      "apiKeySecretId": "",
+      "command": "codex-acp",
+      "args": [],
+      "env": [],
+      "enabled": false
+    },
+    "gemini-cli": {
+      "id": "gemini-cli",
+      "displayName": "Gemini CLI",
+      "apiKeySecretId": "",
+      "command": "gemini",
+      "args": [
+        "--experimental-acp"
+      ],
+      "env": [],
+      "enabled": false
+    },
+    "mistral-vibe": {
+      "id": "mistral-vibe",
+      "displayName": "Mistral Vibe",
+      "apiKeySecretId": "",
+      "command": "vibe-acp",
+      "args": [],
+      "env": [],
+      "enabled": false
+    },
+    "opencode": {
+      "id": "opencode",
+      "displayName": "OpenCode",
+      "apiKeySecretId": "",
+      "command": "opencode",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": false
+    },
+    "kiro-cli": {
+      "id": "kiro-cli",
+      "displayName": "Kiro",
+      "apiKeySecretId": "",
+      "command": "kiro-cli",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": false
+    },
+    "hermes-agent": {
+      "id": "hermes-agent",
+      "displayName": "Hermes Agent",
+      "apiKeySecretId": "",
+      "command": "hermes",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": false
+    }
+  },
+  "customAgents": [
+    {
+      "id": "ClaudeCode",
+      "displayName": "ClaudeCode",
+      "command": "npx",
+      "args": [
+        "@agentclientprotocol/claude-agent-acp@latest"
+      ],
+      "env": []
+    },
+    {
+      "id": "Codex",
+      "displayName": "Codex",
+      "command": "npx",
+      "args": [
+        "@agentclientprotocol/codex-acp@latest"
+      ],
+      "env": []
+    },
+    {
+      "id": "KiloCode",
+      "displayName": "KiloCode",
+      "command": "/Users/wanghaowei/.bun/bin/kilo",
+      "args": [
+        "acp"
+      ],
+      "env": []
+    },
+    {
+      "id": "OpenCode",
+      "displayName": "OpenCode",
+      "command": "/Users/wanghaowei/.bun/bin/opencode",
+      "args": [
+        "acp"
+      ],
+      "env": []
+    },
+    {
+      "id": "piAgent",
+      "displayName": "piAgent",
+      "command": "npx",
+      "args": [
+        "pi-acp"
+      ],
+      "env": []
+    }
+  ],
+  "defaultAgentId": "KiloCode",
+  "autoAllowPermissions": true,
+  "autoMentionActiveNote": true,
+  "expandWikilinkContext": true,
+  "enableSystemNotifications": true,
+  "promptInjection": {
+    "enabled": true,
+    "latex": true,
+    "wikiLinks": true,
+    "tables": true
+  },
+  "debugMode": false,
+  "nodePath": "/Users/wanghaowei/.nvm/versions/node/v24.18.0/bin/node",
+  "exportSettings": {
+    "defaultFolder": "Agent Client",
+    "filenameTemplate": "agent_client_{date}_{time}",
+    "autoExportOnNewChat": false,
+    "autoExportOnCloseChat": false,
+    "openFileAfterExport": true,
+    "includeImages": true,
+    "imageLocation": "obsidian",
+    "imageCustomFolder": "Agent Client",
+    "frontmatterTag": "agent-client"
+  },
+  "windowsWslMode": false,
+  "sendMessageShortcut": "enter",
+  "chatViewLocation": "right-tab",
+  "displaySettings": {
+    "autoCollapseDiffs": true,
+    "diffCollapseThreshold": 10,
+    "maxNoteLength": 10000,
+    "maxSelectionLength": 10000,
+    "showEmojis": true,
+    "fontSize": null
+  },
+  "savedSessions": [],
+  "lastUsedModels": {},
+  "lastUsedModes": {
+    "ClaudeCode": "bypassPermissions",
+    "Codex": "agent-full-access"
+  },
+  "lastUsedConfigOptions": {
+    "KiloCode": {
+      "effort": "max"
+    }
+  },
+  "enableFloatingChat": true,
+  "floatingButtonImage": "",
+  "floatingWindowSize": {
+    "width": 400,
+    "height": 500
+  },
+  "floatingWindowPosition": {
+    "x": 1150,
+    "y": 454
+  },
+  "floatingButtonPosition": {
+    "x": 1493,
+    "y": 711
+  }
+}
