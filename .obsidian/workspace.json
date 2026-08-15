@@ -94,10 +94,11 @@
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Neo4j 的大纲"
+              "title": "大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
@@ -122,7 +123,7 @@
                 "unlinkedCollapsed": false
               },
               "icon": "links-going-out",
-              "title": "Neo4j 的出链列表"
+              "title": "出链"
             }
           },
           {
@@ -164,16 +165,15 @@
             "state": {
               "type": "mermaid-toolbar-view",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "mermaid-toolbar-view"
+              "icon": "trident-custom",
+              "title": "Mermaid Toolbar"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 438.61328125
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -194,7 +194,7 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "3100ec01643c23ee",
+  "active": "9dbf9ef7bdad6929",
   "lastOpenFiles": [
     "未命名.base",
     "DataBase/DataBase.md",
